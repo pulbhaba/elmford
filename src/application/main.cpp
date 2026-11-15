@@ -15,6 +15,7 @@ namespace {
 struct Options {
     std::uint64_t seed{0};
     std::uint64_t ticks{1000};
+    std::chrono::nanoseconds step{std::chrono::milliseconds{1}};
 };
 
 std::uint64_t parse_unsigned(std::string_view value, std::string_view argument_name) {
@@ -31,10 +32,11 @@ Options parse_options(int argc, char* argv[]) {
     for (int index = 1; index < argc; ++index) {
         const std::string_view argument{argv[index]};
         if (argument == "--help" || argument == "-h") {
-            std::cout << "Usage: fantasy_sim [--seed INTEGER] [--ticks INTEGER]\n";
+            std::cout << "Usage: fantasy_sim [--seed INTEGER] [--ticks INTEGER] [--step-ns INTEGER]\n"
+                         "  --step-ns INTEGER  Fixed step duration in nanoseconds (default: 1000000)\n";
             std::exit(0);
         }
-        if (argument != "--seed" && argument != "--ticks") {
+        if (argument != "--seed" && argument != "--ticks" && argument != "--step-ns") {
             throw std::invalid_argument("unknown argument: " + std::string(argument));
         }
         if (index + 1 >= argc) {
@@ -44,8 +46,14 @@ Options parse_options(int argc, char* argv[]) {
         const auto value = parse_unsigned(argv[++index], argument);
         if (argument == "--seed") {
             options.seed = value;
-        } else {
+        } else if (argument == "--ticks") {
             options.ticks = value;
+        } else {
+            if (value == 0 || value > static_cast<std::uint64_t>(std::chrono::nanoseconds::max().count())) {
+                throw std::invalid_argument("invalid value for --step-ns (expected positive nanoseconds)");
+            }
+            options.step = std::chrono::nanoseconds{
+                static_cast<std::chrono::nanoseconds::rep>(value)};
         }
     }
     return options;
@@ -56,7 +64,7 @@ Options parse_options(int argc, char* argv[]) {
 int main(int argc, char* argv[]) {
     try {
         const auto options = parse_options(argc, argv);
-        fantasy::core::SimulationRunner runner{options.seed};
+        fantasy::core::SimulationRunner runner{options.seed, options.step};
         std::uint64_t checksum = 0;
 
         const auto stats = runner.run(options.ticks, [&checksum](const auto&, auto& random) {
@@ -66,6 +74,7 @@ int main(int argc, char* argv[]) {
         const auto elapsed_ms = std::chrono::duration<double, std::milli>{stats.wall_time}.count();
         std::cout << "Seed: " << options.seed << '\n'
                   << "Simulation steps: " << stats.steps_executed << '\n'
+                  << "Fixed simulation step: " << options.step.count() << " ns\n"
                   << "Final simulation time: " << stats.final_simulation_time.count() << " ns\n"
                   << "Execution duration: " << elapsed_ms << " ms\n"
                   << "Updates executed: " << stats.steps_executed << '\n'

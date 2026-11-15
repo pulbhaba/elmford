@@ -1,3 +1,4 @@
+#include "core/config/simulation_config.hpp"
 #include "core/simulation/simulation_runner.hpp"
 
 #include <charconv>
@@ -13,9 +14,7 @@
 namespace {
 
 struct Options {
-    std::uint64_t seed{0};
-    std::uint64_t ticks{1000};
-    std::chrono::nanoseconds step{std::chrono::milliseconds{1}};
+    fantasy::core::SimulationConfig simulation{fantasy::core::default_simulation_config};
 };
 
 std::uint64_t parse_unsigned(std::string_view value, std::string_view argument_name) {
@@ -45,14 +44,14 @@ Options parse_options(int argc, char* argv[]) {
 
         const auto value = parse_unsigned(argv[++index], argument);
         if (argument == "--seed") {
-            options.seed = value;
+            options.simulation.seed = value;
         } else if (argument == "--ticks") {
-            options.ticks = value;
+            options.simulation.ticks = value;
         } else {
             if (value == 0 || value > static_cast<std::uint64_t>(std::chrono::nanoseconds::max().count())) {
                 throw std::invalid_argument("invalid value for --step-ns (expected positive nanoseconds)");
             }
-            options.step = std::chrono::nanoseconds{
+            options.simulation.fixed_step = std::chrono::nanoseconds{
                 static_cast<std::chrono::nanoseconds::rep>(value)};
         }
     }
@@ -64,17 +63,17 @@ Options parse_options(int argc, char* argv[]) {
 int main(int argc, char* argv[]) {
     try {
         const auto options = parse_options(argc, argv);
-        fantasy::core::SimulationRunner runner{options.seed, options.step};
+        fantasy::core::SimulationRunner runner{options.simulation};
         std::uint64_t checksum = 0;
 
-        const auto stats = runner.run(options.ticks, [&checksum](const auto&, auto& random) {
+        const auto stats = runner.run(options.simulation.ticks, [&checksum](const auto&, auto& random) {
             checksum += random.next_u64();
         });
 
         const auto elapsed_ms = std::chrono::duration<double, std::milli>{stats.wall_time}.count();
-        std::cout << "Seed: " << options.seed << '\n'
+        std::cout << "Seed: " << options.simulation.seed << '\n'
                   << "Simulation steps: " << stats.steps_executed << '\n'
-                  << "Fixed simulation step: " << options.step.count() << " ns\n"
+                  << "Fixed simulation step: " << options.simulation.fixed_step.count() << " ns\n"
                   << "Final simulation time: " << stats.final_simulation_time.count() << " ns\n"
                   << "Execution duration: " << elapsed_ms << " ms\n"
                   << "Updates executed: " << stats.steps_executed << '\n'

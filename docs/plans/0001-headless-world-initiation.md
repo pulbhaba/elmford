@@ -1,6 +1,7 @@
 # Headless fantasy world simulation: project initiation
 
-**Status:** Proposed architecture for review. Do not begin substantial domain
+**Status:** Proposed architecture for review; world-day pacing is agreed.
+Other architectural questions remain. Do not begin substantial domain
 implementation until the architecture and open questions below are reviewed
 and agreed.
 
@@ -129,11 +130,13 @@ unless a decision record explicitly narrows that guarantee.
 
 ## Proposed scheduling and time model
 
-Use a fixed **one in-game minute** simulation step for the first prototype.
-The current nanosecond clock can remain the monotonic implementation detail,
-but calendar-facing APIs should use named world-time units and must not imply
-that one simulation tick equals one real millisecond. Wall-clock time measures
-only execution performance and never changes world progression.
+A world day is 24 world-hours. The agreed default pacing maps one world day to
+four hours of real-time play (6x world-time progression). Keep the world-day
+duration, real-time duration per world day, and fixed simulation step as
+separate configuration values. The current 1 ms step is an infrastructure
+default, not a calendar unit or an agreed domain update quantum. The headless
+CLI remains a batch runner; a future application may use the configured pace
+to schedule fixed steps. Wall-clock time does not change simulation results.
 
 Each tick follows a deterministic phase order:
 
@@ -145,17 +148,17 @@ Each tick follows a deterministic phase order:
 5. Apply lifecycle and settlement changes whose scheduled time has arrived.
 6. Advance world time and publish requested observations/summaries.
 
-For the first milestone, run individual needs and activity decisions each
-minute, while settlement reporting can be daily. Later, cadence configuration
-can reduce work for distant settlements and regions. Keep updates in a stable
-order and isolate random streams by stable entity/system identifiers so adding
-unrelated entities does not perturb every other random decision. The present
-runner's single mutable stream is sufficient for the current foundation but
-should not become the domain's global randomness contract.
+The fixed simulation step and the cadence of individual needs, activities,
+settlement reporting, and lifecycle updates remain to be chosen as those domain
+systems are designed. Keep update order stable and isolate random streams by
+stable entity/system identifiers so adding unrelated entities does not perturb
+every other random decision. The present runner's single mutable stream is
+sufficient for the current foundation but should not become the domain's
+global randomness contract.
 
-This is a proposal: confirm whether one minute is the right first world-time
-quantum and whether reporting/lifecycle cadences should be configurable from
-the outset.
+The 24-hour world day and four-hour real-time duration are agreed. How the
+calendar-facing API represents sub-day time and how often each domain system
+updates remain to be decided as those systems are designed.
 
 ## Proposed project and CMake structure
 
@@ -224,9 +227,10 @@ sequence on supported builds, subject to any documented platform limits.
 
 ## Assumptions and open questions for review
 
-1. **World-time quantum:** proposed one in-game minute per fixed step. Confirm
-   before implementation; the current 1 ms default is infrastructure timing,
-   not a suitable calendar contract.
+1. **World-time pace:** the default 24-hour world day per four hours of
+   real-time play is agreed. The fixed simulation step and domain update
+   cadence remain open; the current 1 ms infrastructure default is not a
+   calendar contract.
 2. **Numeric representation:** proposed integer time and resource quantities,
    with fixed-scale needs if fractional rates are necessary. Confirm scale and
    overflow policy when defining domain types.

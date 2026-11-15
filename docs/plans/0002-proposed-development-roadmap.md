@@ -158,6 +158,10 @@ rather than controlling the entire settlement.
 - Stages 1–5 remain headless and keep SDL3 out of the simulation core.
 - SDL3 enters at Stage 6, in the application layer. The simulation core remains
   usable without a graphical client.
+- Keep the simulation-facing interface usable by future clients, including
+  VR applications. Clients submit simulation commands and consume immutable
+  snapshots or events; input and presentation details stay in the application
+  layer.
 - Stage 1 establishes the clock and scheduling foundation. Stage 5 coordinates
   domain updates and observability on top of that foundation.
 - The roadmap is an ordering proposal, not a delivery schedule. Stage details

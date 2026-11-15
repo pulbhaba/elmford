@@ -74,3 +74,5 @@ milestone are tracked in
 [`docs/plans/0001-headless-world-initiation.md`](docs/plans/0001-headless-world-initiation.md).
 The broader staged direction, including the proposed SDL3 introduction, is in
 [`docs/plans/0002-proposed-development-roadmap.md`](docs/plans/0002-proposed-development-roadmap.md).
+The feature backlog, descriptions, and GitHub issue links are collected in
+[`docs/github-feature-issues.md`](docs/github-feature-issues.md).

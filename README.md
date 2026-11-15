@@ -67,3 +67,8 @@ produce an error on standard error and a non-zero exit code.
 
 Determinism details and floating-point limitations are recorded in
 [`docs/decisions/0001-determinism.md`](docs/decisions/0001-determinism.md).
+
+Project workflow and architecture constraints for contributors and agents are
+in [`AGENTS.md`](AGENTS.md). The proposed architecture and first living-world
+milestone are tracked in
+[`docs/plans/0001-headless-world-initiation.md`](docs/plans/0001-headless-world-initiation.md).

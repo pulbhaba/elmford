@@ -24,11 +24,9 @@
 
 ## GitHub feature and implementation workflow
 
-Track repository tasks through issues in the Elmford repository. Adapted from
-the Albedo workspace's
-`albedo/.agents/guidance/albedo/common.d/task-workflow.md`; these instructions
-are self-contained so an Elmford checkout does not depend on Albedo being
-present.
+Track repository tasks through issues in the Elmford repository. The workflow
+below is the complete process for issue intake, implementation branches,
+validation, and pull requests.
 
 ### Create or start work
 

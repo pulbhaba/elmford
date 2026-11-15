@@ -19,6 +19,9 @@
   decisions, progress, and outstanding questions current, and mark it complete
   only when its outcome is achieved.
 - Work in small, reviewable increments. Inspect the diff before committing.
+- Keep each task low in complexity and scoped to one outcome so its merge
+  request (MR) stays very small. Split broader work into separate task issues
+  and MRs.
 - Do not assume that a plan authorizes implementation when it explicitly calls
   for review and agreement first.
 

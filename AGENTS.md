@@ -46,7 +46,7 @@ present.
    creating a focused branch named `feat/ISSUE_NUMBER-short-description`,
    `fix/ISSUE_NUMBER-short-description`, `docs/ISSUE_NUMBER-short-description`,
    or `chore/ISSUE_NUMBER-short-description`, as appropriate. The current
-   integration branch is `main`.
+   integration branch is `develop`, created from the updated `main` branch.
 4. Before multi-file or multi-area implementation, state a concise plan and
    check `docs/plans/` for an existing plan. Keep implementation within the
    issue's acceptance criteria and this repository's architecture constraints.

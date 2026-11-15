@@ -21,33 +21,34 @@
 - Work in small, reviewable increments. Inspect the diff before committing.
 - Do not assume that a plan authorizes implementation when it explicitly calls
   for review and agreement first.
-- Do not start or update GitHub issues unless the user asks for GitHub-backed
-  work.
 
 ## GitHub feature and implementation workflow
 
-For GitHub-backed feature work, track implementation through issues in the
-Elmford repository. Adapted from the Albedo workspace's
-`albedo/.agents/guidance/albedo/common.d/task-workflow.md`; these instructions
-are self-contained so an Elmford checkout does not depend on Albedo being
-present.
+Track repository tasks through issues in the Elmford repository. The workflow
+below is the complete process for issue intake, implementation branches,
+validation, and pull requests.
 
 ### Create or start work
 
-1. When given an issue URL or number, read the full issue before editing. Record
-   its acceptance criteria, dependencies, and blockers, and check for duplicate
-   or related issues. For a new feature list, create one clearly scoped issue
-   per feature with a description and acceptance criteria.
-2. Assign the issue to the task owner when authorized. If an Elmford GitHub
-   Project exists, add the issue and move it to `In Progress`; otherwise track
-   status on the issue itself. Post one concise start comment with relevant
-   blockers or related issues.
-3. Check the repository's integration branch and update it from `origin` before
-   creating a focused branch named `feat/ISSUE_NUMBER-short-description`,
-   `fix/ISSUE_NUMBER-short-description`, `docs/ISSUE_NUMBER-short-description`,
-   or `chore/ISSUE_NUMBER-short-description`, as appropriate. The current
-   integration branch is `develop`, created from the updated `main` branch.
-4. Before multi-file or multi-area implementation, state a concise plan and
+1. For every repository task, search Elmford issues for an issue specific to
+   that task and for its owning feature issue. Read matching issues, check for
+   duplicates, and record the task's acceptance criteria, dependencies, and
+   blockers before editing. Reuse the matching task issue when one exists.
+2. If no task issue exists, create one with a clear description and acceptance
+   criteria, linked as a sub-issue of the relevant existing feature. If no
+   relevant feature issue exists, create the feature issue first and link the
+   task beneath it. For a new feature list, create one feature issue and one
+   clearly scoped task issue per deliverable.
+3. Assign the task issue to the task owner. If an Elmford GitHub Project
+   exists, add the issue and move it to `In Progress`. Post one concise start
+   comment with relevant blockers or related issues.
+4. Start every task branch from the latest `origin/develop`: fetch from
+   `origin`, update local `develop` with a fast-forward only, then create a
+   focused branch. Use `feat/ISSUE_NUMBER-short-description`,
+   `fix/ISSUE_NUMBER-short-description`, `chore/ISSUE_NUMBER-short-description`,
+   or `doc/ISSUE_NUMBER-short-description`, matching the task type. Never
+   commit task work on `develop` or push directly to `develop`.
+5. Before multi-file or multi-area implementation, state a concise plan and
    check `docs/plans/` for an existing plan. Keep implementation within the
    issue's acceptance criteria and this repository's architecture constraints.
 
@@ -60,10 +61,12 @@ present.
    using the applicable repository commands and report exact commands and
    results. Do not add or run tests unless the task asks for testing or
    verification.
-3. Commit only intended files with a conventional-style message that references
-   the issue, for example `feat: add world calendar (#ISSUE_NUMBER)`.
-4. Push the focused branch and open a pull request against the repository's
-   integration branch when the user asks for GitHub-backed implementation.
+3. Commit only intended files with a message prefixed by the task type and
+   referencing its issue: `feat:`, `fix:`, `chore:`, or `doc:` (for example,
+   `feat: add world calendar (#ISSUE_NUMBER)`). Use the same type prefix in the
+   pull request title.
+4. Push only the focused task branch and open a pull request targeting
+   `develop`. All changes enter `develop` through an approved pull request.
    Use a concise title and a body with `Summary`, `Changes`, `Validation`, and
    `Related issue` sections. Include `Closes #ISSUE_NUMBER` when the PR delivers
    that issue. Include screenshots for relevant graphical changes.

@@ -55,6 +55,18 @@ inputs.
 Use `fantasy_sim --help` to show the supported arguments. Invalid arguments
 produce an error on standard error and a non-zero exit code.
 
+## Simulation configuration
+
+The committed defaults are in
+[`src/core/config/simulation_config.hpp`](src/core/config/simulation_config.hpp).
+They include the seed, tick count, fixed simulation step, world-day duration,
+and real-time duration for a world day. The default world day is 24 world-hours
+per four hours of real-time play, or 6x world-time progression. The application
+can use these separate durations to pace fixed simulation steps. The current
+headless CLI is a batch runner and still computes requested ticks as quickly as
+possible; `--step-ns` changes the simulated duration of each tick, not its
+wall-clock runtime.
+
 ## Core interfaces
 
 - `SimulationClock` owns integer simulation time and a positive fixed step.
@@ -67,6 +79,8 @@ produce an error on standard error and a non-zero exit code.
 
 Determinism details and floating-point limitations are recorded in
 [`docs/decisions/0001-determinism.md`](docs/decisions/0001-determinism.md).
+World-day pacing is recorded in
+[`docs/decisions/0002-world-day-pacing.md`](docs/decisions/0002-world-day-pacing.md).
 
 Project workflow and architecture constraints for contributors and agents are
 in [`AGENTS.md`](AGENTS.md). The proposed architecture and first living-world

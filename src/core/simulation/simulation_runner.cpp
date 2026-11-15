@@ -5,8 +5,11 @@
 
 namespace fantasy::core {
 
+SimulationRunner::SimulationRunner(SimulationConfig config)
+    : seed_(config.seed), clock_(config.fixed_step), random_(config.seed) {}
+
 SimulationRunner::SimulationRunner(std::uint64_t seed, SimulationClock::Duration fixed_step)
-    : seed_(seed), clock_(fixed_step), random_(seed) {}
+    : SimulationRunner(SimulationConfig{.seed = seed, .fixed_step = fixed_step}) {}
 
 const SimulationClock& SimulationRunner::clock() const noexcept {
     return clock_;

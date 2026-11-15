@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/config/simulation_config.hpp"
 #include "core/random/random_stream.hpp"
 #include "core/time/simulation_clock.hpp"
 
@@ -19,6 +20,7 @@ class SimulationRunner {
 public:
     using Update = std::function<void(const SimulationClock&, RandomStream&)>;
 
+    explicit SimulationRunner(SimulationConfig config);
     explicit SimulationRunner(
         std::uint64_t seed,
         SimulationClock::Duration fixed_step = std::chrono::milliseconds{1});

@@ -72,3 +72,5 @@ Project workflow and architecture constraints for contributors and agents are
 in [`AGENTS.md`](AGENTS.md). The proposed architecture and first living-world
 milestone are tracked in
 [`docs/plans/0001-headless-world-initiation.md`](docs/plans/0001-headless-world-initiation.md).
+The broader staged direction, including the proposed SDL3 introduction, is in
+[`docs/plans/0002-proposed-development-roadmap.md`](docs/plans/0002-proposed-development-roadmap.md).

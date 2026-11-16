@@ -68,6 +68,15 @@ headless CLI is a batch runner and still computes requested ticks as quickly as
 possible; `--step-ns` changes the simulated duration of each tick, not its
 wall-clock runtime.
 
+## CMake targets
+
+- `fantasy_sim::infrastructure` holds the clock, random streams, and logging.
+  It never links the simulation target.
+- `fantasy_sim::simulation` holds domain code (currently the runner) and links
+  infrastructure one-way.
+- `fantasy_sim::core` is a compatibility alias that resolves to simulation.
+- No target links SDL or any graphics dependency.
+
 ## Core interfaces
 
 - `SimulationClock` owns integer simulation time and a positive fixed step.

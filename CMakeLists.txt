@@ -5,26 +5,40 @@ project(fantasy_simulation VERSION 0.1.0 LANGUAGES CXX)
 include(CTest)
 option(FANTASY_SIM_BUILD_TESTS "Build the Catch2 test suite" ${BUILD_TESTING})
 
-add_library(fantasy_sim_core
+# Infrastructure: clock, random streams, and logging. Never links simulation.
+add_library(fantasy_sim_infrastructure
     src/core/time/simulation_clock.cpp
     src/core/random/random_stream.cpp
     src/core/logging/logger.cpp
-    src/core/simulation/simulation_runner.cpp
 )
-add_library(fantasy_sim::core ALIAS fantasy_sim_core)
-target_include_directories(fantasy_sim_core PUBLIC
+add_library(fantasy_sim::infrastructure ALIAS fantasy_sim_infrastructure)
+target_include_directories(fantasy_sim_infrastructure PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
 )
-target_compile_features(fantasy_sim_core PUBLIC cxx_std_20)
+target_compile_features(fantasy_sim_infrastructure PUBLIC cxx_std_20)
+
+# Simulation: domain code. Links infrastructure one-way.
+add_library(fantasy_sim_simulation
+    src/core/simulation/simulation_runner.cpp
+)
+add_library(fantasy_sim::simulation ALIAS fantasy_sim_simulation)
+target_link_libraries(fantasy_sim_simulation PUBLIC fantasy_sim::infrastructure)
+
+# Compatibility alias: existing consumers keep linking fantasy_sim::core.
+add_library(fantasy_sim_core INTERFACE)
+add_library(fantasy_sim::core ALIAS fantasy_sim_core)
+target_link_libraries(fantasy_sim_core INTERFACE fantasy_sim::simulation)
 
 add_executable(fantasy_sim src/application/main.cpp)
 target_link_libraries(fantasy_sim PRIVATE fantasy_sim::core)
 
 if(MSVC)
-    target_compile_options(fantasy_sim_core PRIVATE /W4 /permissive-)
+    target_compile_options(fantasy_sim_infrastructure PRIVATE /W4 /permissive-)
+    target_compile_options(fantasy_sim_simulation PRIVATE /W4 /permissive-)
     target_compile_options(fantasy_sim PRIVATE /W4 /permissive-)
 else()
-    target_compile_options(fantasy_sim_core PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(fantasy_sim_infrastructure PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(fantasy_sim_simulation PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(fantasy_sim PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 

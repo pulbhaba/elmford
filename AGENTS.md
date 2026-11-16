@@ -42,9 +42,9 @@ validation, and pull requests.
    relevant feature issue exists, create the feature issue first and link the
    task beneath it. For a new feature list, create one feature issue and one
    clearly scoped task issue per deliverable.
-3. Assign the task issue to the task owner. If an Elmford GitHub Project
-   exists, add the issue and move it to `In Progress`. Post one concise start
-   comment with relevant blockers or related issues.
+3. Assign the task issue to the task owner. Post one concise start comment
+   with relevant blockers or related issues. Elmford tracks features and
+   tasks as issues and sub-issues in this repository.
 4. Start every task branch from the latest `origin/develop`: fetch from
    `origin`, update local `develop` with a fast-forward only, then create a
    focused branch. Use `feat/ISSUE_NUMBER-short-description`,
@@ -73,14 +73,12 @@ validation, and pull requests.
    Use a concise title and a body with `Summary`, `Changes`, `Validation`, and
    `Related issue` sections. Include `Closes #ISSUE_NUMBER` when the PR delivers
    that issue. Include screenshots for relevant graphical changes.
-5. Link the pull request from the issue, and move the Project item to
-   `In Review` when one exists. Post progress comments for material changes
-   such as resolved dependencies, completed validation, or newly found
+5. Link the pull request from the issue. Post progress comments for material
+   changes such as resolved dependencies, completed validation, or newly found
    blockers. Do not request merge or mark the issue complete until required
-   checks and approvals pass. After merge and issue closure, move the Project
-   item to `Done` when available.
+   checks and approvals pass.
 
-If GitHub access or a required Project operation is unavailable, keep the
+If GitHub access is unavailable, keep the
 reviewable work ready locally and report the exact blocked external action.
 
 ## Project constraints

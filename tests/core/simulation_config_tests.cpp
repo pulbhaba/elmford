@@ -12,7 +12,8 @@ TEST_CASE("default simulation configuration defines world-day pacing") {
 
     REQUIRE(config.seed == 0);
     REQUIRE(config.ticks == 1000);
-    REQUIRE(config.fixed_step == 1ms);
+    REQUIRE(config.fixed_step == 1s);
+    REQUIRE(config.world_day_duration % config.fixed_step == 0s);
     REQUIRE(config.world_day_duration == 24h);
     REQUIRE(config.real_time_per_world_day == 4h);
     REQUIRE(config.world_day_duration / config.real_time_per_world_day == 6);

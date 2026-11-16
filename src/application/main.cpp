@@ -32,7 +32,7 @@ Options parse_options(int argc, char* argv[]) {
         const std::string_view argument{argv[index]};
         if (argument == "--help" || argument == "-h") {
             std::cout << "Usage: fantasy_sim [--seed INTEGER] [--ticks INTEGER] [--step-ns INTEGER]\n"
-                         "  --step-ns INTEGER  Fixed step duration in nanoseconds (default: 1000000)\n";
+                         "  --step-ns INTEGER  Fixed step duration in nanoseconds (default: 1000000000 = 1 world-second)\n";
             std::exit(0);
         }
         if (argument != "--seed" && argument != "--ticks" && argument != "--step-ns") {

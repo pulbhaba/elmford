@@ -45,8 +45,9 @@ cmake --build --preset runtime
 ./build/fantasy_sim --seed 12345 --ticks 1000
 ```
 
-Both arguments are optional. The defaults are seed `0` and `1000` ticks. Each
-tick advances simulation time by 1 ms. The output includes the seed, executed
+The arguments are optional. The defaults are seed `0` and `1000` ticks. Each
+tick advances simulation time by one world-second (1,000,000,000 ns); use
+`--step-ns 1000000` for 1 ms steps. The output includes the seed, executed
 step count, final simulation time, wall-clock execution duration, update count,
 and a deterministic checksum from one random draw per update. The duration can
 vary between runs; simulation results and checksum remain stable for identical

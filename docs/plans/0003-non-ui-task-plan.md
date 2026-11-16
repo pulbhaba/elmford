@@ -132,3 +132,4 @@ measured run, and minimal save/load.
 
 - 2026-11-16: Decisions agreed; task issues #20-#60 created under their
   features. Default step changed to one world-second (#62). No implementation yet beyond #15 and #18.
+- 2026-11-16: #28 adds golden determinism tests and docs (same-build only), the last task of feature #2 (after #26 and #27).

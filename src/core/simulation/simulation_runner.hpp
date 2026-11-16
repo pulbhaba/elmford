@@ -27,6 +27,8 @@ public:
         SimulationClock::Duration fixed_step = std::chrono::milliseconds{1});
 
     [[nodiscard]] const SimulationClock& clock() const noexcept;
+    // Single mutable stream for the foundation prototype only. Domain code must
+    // use derive_stream() so streams do not depend on call order.
     [[nodiscard]] RandomStream& random() noexcept;
     [[nodiscard]] std::uint64_t seed() const noexcept;
     [[nodiscard]] TickScheduler& scheduler() noexcept;

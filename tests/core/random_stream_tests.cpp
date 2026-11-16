@@ -69,3 +69,53 @@ TEST_CASE("random value generation rejects invalid ranges") {
     REQUIRE_THROWS_AS(random.uniform_real(std::numeric_limits<double>::infinity(), 2.0),
                       std::invalid_argument);
 }
+
+TEST_CASE("derived streams are repeatable and independent per system and entity") {
+    using fantasy::core::derive_stream;
+    using fantasy::core::derive_stream_id;
+
+    REQUIRE(derive_stream_id(7, 1, 42) == derive_stream_id(7, 1, 42));
+    REQUIRE(derive_stream_id(7, 1, 42) != derive_stream_id(7, 1, 43));
+    REQUIRE(derive_stream_id(7, 1, 42) != derive_stream_id(7, 2, 42));
+    REQUIRE(derive_stream_id(7, 1, 42) != derive_stream_id(8, 1, 42));
+    REQUIRE(derive_stream_id(7, 1, 0) != derive_stream_id(7, 1));
+    REQUIRE(derive_stream_id(7, 1, 2) != derive_stream_id(7, 2, 1));
+
+    auto first = derive_stream(7, 1, 42);
+    auto second = derive_stream(7, 1, 42);
+    auto other = derive_stream(7, 1, 43);
+    bool differs = false;
+    for (int index = 0; index < 8; ++index) {
+        const auto value = first.next_u64();
+        REQUIRE(value == second.next_u64());
+        differs = differs || value != other.next_u64();
+    }
+    REQUIRE(differs);
+}
+
+TEST_CASE("adding an unrelated entity or system does not perturb existing streams") {
+    using fantasy::core::derive_stream;
+
+    std::array<std::uint64_t, 10> baseline{};
+    {
+        auto stream = derive_stream(99, 3, 1000);
+        for (auto& value : baseline) {
+            value = stream.next_u64();
+        }
+    }
+
+    // Create and consume streams for new entities and systems, in mixed order.
+    auto new_entity = derive_stream(99, 3, 1001);
+    auto new_system = derive_stream(99, 4, 1000);
+    auto system_wide = derive_stream(99, 3);
+    for (int index = 0; index < 5; ++index) {
+        (void)new_entity.next_u64();
+        (void)new_system.next_u64();
+        (void)system_wide.next_u64();
+    }
+
+    auto stream = derive_stream(99, 3, 1000);
+    for (const auto expected : baseline) {
+        REQUIRE(stream.next_u64() == expected);
+    }
+}

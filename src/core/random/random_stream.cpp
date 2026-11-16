@@ -11,6 +11,15 @@ namespace {
 constexpr std::uint64_t sign_bit = std::uint64_t{1} << 63;
 constexpr std::uint64_t increment = 0x9E3779B97F4A7C15ULL;
 
+std::uint64_t finalize(std::uint64_t value) noexcept {
+    value = (value ^ (value >> 30)) * 0xBF58476D1CE4E5B9ULL;
+    value = (value ^ (value >> 27)) * 0x94D049BB133111EBULL;
+    return value ^ (value >> 31);
+}
+
+constexpr std::uint64_t system_salt = 0xD6E8FEB86659FD93ULL;
+constexpr std::uint64_t entity_salt = 0xA0761D6478BD642FULL;
+
 } // namespace
 
 RandomStream::RandomStream(std::uint64_t seed, std::uint64_t stream_id) noexcept
@@ -63,6 +72,22 @@ double RandomStream::uniform_real(double minimum, double maximum) {
     const double unit_value = static_cast<double>(mantissa) * unit_range;
     const double result = std::lerp(minimum, maximum, unit_value);
     return result < maximum ? result : std::nextafter(maximum, minimum);
+}
+
+std::uint64_t derive_stream_id(std::uint64_t world_seed, std::uint64_t system_id,
+                              std::optional<std::uint64_t> entity_id) noexcept {
+    std::uint64_t id = finalize(world_seed + increment);
+    id = finalize(id ^ (system_id + system_salt));
+    if (entity_id) {
+        id = finalize(id ^ entity_salt);
+        id = finalize(id ^ (*entity_id + increment));
+    }
+    return id;
+}
+
+RandomStream derive_stream(std::uint64_t world_seed, std::uint64_t system_id,
+                           std::optional<std::uint64_t> entity_id) noexcept {
+    return RandomStream{world_seed, derive_stream_id(world_seed, system_id, entity_id)};
 }
 
 } // namespace fantasy::core

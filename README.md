@@ -80,6 +80,10 @@ wall-clock runtime.
 ## Core interfaces
 
 - `SimulationClock` owns integer simulation time and a positive fixed step.
+- `world_time_from` (simulation target) derives `WorldTime` (day index, hour,
+  minute, time of day) from clock time and the world-day duration with integer
+  math; units and flooring rules are documented in `world_calendar.hpp`. The
+  calendar is a 24-hour day only.
 - `RandomStream` owns its generator state; stream IDs derive independent,
   repeatable streams from a world seed.
 - `SimulationRunner` owns a clock and default random stream and calls a supplied

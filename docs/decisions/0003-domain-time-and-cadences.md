@@ -7,9 +7,10 @@ and per-system cadences open.
 
 ## Decisions
 
-- Do not introduce a new time quantum. The fixed step already in
-  `SimulationConfig` (`fixed_step`, default 1 ms) remains the only simulation
-  step. The CLI can still change it with `--step-ns`.
+- Do not introduce a separate domain quantum. The `fixed_step` in
+  `SimulationConfig` remains the only simulation step, and its default
+  changes from 1 ms to **1 world-second** (task #62). The CLI can still
+  change it with `--step-ns`.
 - Domain systems (needs, activities, lifecycle, reporting) run on cadences
   stored in `SimulationConfig`, each a positive integer multiple of the fixed
   step. Configuration validation rejects other values.
@@ -20,9 +21,13 @@ and per-system cadences open.
   resolution, lifecycle, then advance time. Systems in one phase run in
   registration order.
 
-## Consequences and risk
+## Consequences
 
-At the 1 ms default a world day is 86,400,000 ticks, so a 30-day run is about
-2.6 billion ticks. Cadence checks must be cheap, and long headless runs may
-use a coarser `--step-ns`. Task #57 measures this and records any mitigation;
-changing the default step would be a new decision.
+At 1 ms a world day would be 86.4 million ticks and a 30-day batch run about
+2.6 billion, too slow for tests and long headless runs, which compute ticks as
+fast as possible. At 1 second a world day is 86,400 ticks and 30 days is about
+2.6 million, so a 30-day run with 100 inhabitants should take minutes to tens
+of minutes at most. The step is the finest granularity of domain time; travel
+costs use world-seconds. In-game real-time pacing (decision 0002) is
+unaffected: 6x pacing at a 1 s step is about 6 ticks per real second. Task #57
+measures the actual run time.

@@ -15,7 +15,7 @@ questions.
 
 | Topic | Decision | Record |
 | --- | --- | --- |
-| Time | Keep the configured fixed step (default 1 ms); domain cadences are multiples of it; 24-hour world day | [0002](../decisions/0002-world-day-pacing.md), [0003](../decisions/0003-domain-time-and-cadences.md) |
+| Time | Default fixed step becomes 1 world-second; domain cadences are multiples of it; 24-hour world day | [0002](../decisions/0002-world-day-pacing.md), [0003](../decisions/0003-domain-time-and-cadences.md) |
 | Numerics | Integer canonical state, fixed-scale needs, checked arithmetic | [0004](../decisions/0004-numerics-and-determinism-scope.md) |
 | Determinism | Same-build reproducibility first; cross-platform not yet promised | [0004](../decisions/0004-numerics-and-determinism-scope.md) |
 | Navigation | Location graph plus deterministic Dijkstra pathfinding in #3 | [0005](../decisions/0005-navigation.md) |
@@ -27,9 +27,9 @@ questions.
 
 ## Open risks and questions
 
-- **Tick cost at 1 ms.** A world day is 86.4M ticks; 30 days is about 2.6B.
-  Task #57 measures this and recommends a mitigation (cheap cadence checks, a
-  coarser `--step-ns`, or a later decision to change the default step).
+- **Tick cost.** The default step moves from 1 ms to 1 world-second so 30
+  world days is about 2.6M ticks (target: minutes to tens of minutes). Task
+  #57 measures it; a coarser step or cheaper cadence checks are the fallbacks.
 - **Initial content** (occupations, resources, recipes, rates, thresholds) is
   chosen inside tasks #39, #42, #44, #46, and #48 and documented there.
 - **Save format** is chosen in #58.
@@ -49,10 +49,11 @@ the suggested order is top to bottom.
 | # | Task | Blocked by |
 | --- | --- | --- |
 | #15, #18 | Fixed-step CLI option; world-day pacing config (done) | |
+| #62 | Default fixed step becomes one world-second | #20 |
 | #22 | Separate simulation and infrastructure CMake targets | #20 |
 | #23 | World calendar and sub-day time types | #22 |
 | #24 | Validate simulation configuration | #23 |
-| #25 | Configure domain update cadences | #24 |
+| #25 | Configure domain update cadences | #24, #62 |
 | #26 | Deterministic tick phase scheduler | #25 |
 | #27 | Per-system and per-entity random stream derivation | #20 |
 | #28 | Golden determinism coverage and docs | #26, #27 |
@@ -130,4 +131,4 @@ measured run, and minimal save/load.
 ## Progress
 
 - 2026-11-16: Decisions agreed; task issues #20-#60 created under their
-  features. No implementation yet beyond #15 and #18.
+  features. Default step changed to one world-second (#62). No implementation yet beyond #15 and #18.

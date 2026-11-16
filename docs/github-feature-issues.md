@@ -42,7 +42,7 @@ substantial implementation.
 
 ### Tasks
 
-Task issues: #15, #18 (done), #22-#28. Decisions: 0003, 0004.
+Task issues: #15, #18 (done), #22-#28, #62. Decisions: 0003, 0004.
 
 ## 2. Feature: Model the world and its locations ([#3](https://github.com/pulbhaba/elmford/issues/3))
 

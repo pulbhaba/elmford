@@ -134,8 +134,9 @@ unless a decision record explicitly narrows that guarantee.
 A world day is 24 world-hours. The agreed default pacing maps one world day to
 four hours of real-time play (6x world-time progression). Keep the world-day
 duration, real-time duration per world day, and fixed simulation step as
-separate configuration values. The current 1 ms step is an infrastructure
-default, not a calendar unit or an agreed domain update quantum. The headless
+separate configuration values. The code's current 1 ms step is an infrastructure
+default that task #62 changes to one world-second (decision 0003); the step
+is not itself a calendar unit. The headless
 CLI remains a batch runner; a future application may use the configured pace
 to schedule fixed steps. Wall-clock time does not change simulation results.
 
@@ -229,8 +230,8 @@ sequence on supported builds, subject to any documented platform limits.
 ## Assumptions and open questions for review
 
 1. **World-time pace (Agreed):** 24-hour world day per four hours of
-   real-time play. The configured fixed step (default 1 ms) stays the only
-   step; domain cadences are multiples of it
+   real-time play. The configured fixed step (default 1 world-second, task #62) stays the
+   only step; domain cadences are multiples of it
    ([decision 0003](../decisions/0003-domain-time-and-cadences.md)).
 2. **Numeric representation (Agreed, decision 0004):** integer time and resource quantities,
    with fixed-scale needs if fractional rates are necessary. Confirm scale and

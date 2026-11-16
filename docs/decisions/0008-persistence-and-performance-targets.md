@@ -12,5 +12,6 @@ synchronization remain out of scope.
 ## Targets
 
 The longer-run target is 100 inhabitants over 30 world days. Measure and
-record timings (task #57); there is no hard CI performance gate yet. Revisit
+record timings (task #57). A 30-day run should complete in minutes to tens
+of minutes; there is no hard CI performance gate yet. Revisit
 the targets after the first full settlement slice.

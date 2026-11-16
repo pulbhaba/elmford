@@ -19,6 +19,7 @@ target_compile_features(fantasy_sim_infrastructure PUBLIC cxx_std_20)
 
 # Simulation: domain code. Links infrastructure one-way.
 add_library(fantasy_sim_simulation
+    src/core/config/simulation_config.cpp
     src/core/simulation/simulation_runner.cpp
     src/core/time/world_calendar.cpp
 )

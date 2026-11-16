@@ -68,6 +68,13 @@ headless CLI is a batch runner and still computes requested ticks as quickly as
 possible; `--step-ns` changes the simulated duration of each tick, not its
 wall-clock runtime.
 
+`fantasy::core::validate(config)` returns a list of readable error messages
+(empty when valid). It requires a positive tick count, a positive fixed step, a
+positive world-day duration that is an exact multiple of the fixed step, and a
+positive real-time duration per world day. The CLI validates before running,
+prints each error to standard error, and exits with code 2; for example,
+`--step-ns 7` is rejected because 7 ns does not divide a 24-hour world day.
+
 ## CMake targets
 
 - `fantasy_sim::infrastructure` holds the clock, random streams, and logging.

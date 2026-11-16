@@ -1,9 +1,10 @@
 # Headless fantasy world simulation: project initiation
 
-**Status:** Proposed architecture for review; world-day pacing is agreed.
-Other architectural questions remain. Do not begin substantial domain
-implementation until the architecture and open questions below are reviewed
-and agreed.
+**Status:** Proposed architecture. World-day pacing and the design questions
+resolved in [`0003-non-ui-task-plan.md`](0003-non-ui-task-plan.md) (decisions
+0003-0008) are agreed; items below marked **Agreed** are settled, the rest
+remain proposals. Implementation proceeds through the task issues in plan
+0003.
 
 ## Goal
 
@@ -227,37 +228,34 @@ sequence on supported builds, subject to any documented platform limits.
 
 ## Assumptions and open questions for review
 
-1. **World-time pace:** the default 24-hour world day per four hours of
-   real-time play is agreed. The fixed simulation step and domain update
-   cadence remain open; the current 1 ms infrastructure default is not a
-   calendar contract.
-2. **Numeric representation:** proposed integer time and resource quantities,
+1. **World-time pace (Agreed):** 24-hour world day per four hours of
+   real-time play. The configured fixed step (default 1 ms) stays the only
+   step; domain cadences are multiples of it
+   ([decision 0003](../decisions/0003-domain-time-and-cadences.md)).
+2. **Numeric representation (Agreed, decision 0004):** integer time and resource quantities,
    with fixed-scale needs if fractional rates are necessary. Confirm scale and
    overflow policy when defining domain types.
-3. **Content format:** proposed compiled-in definitions for the first
+3. **Content format (Agreed, decision 0006):** compiled-in definitions for the first
    milestone, with a data-driven boundary and no external parser dependency.
-4. **Behavior model:** proposed explicit prioritized rules for the initial
+4. **Behavior model (Agreed, decision 0006):** explicit prioritized rules for the initial
    small population. Consider utility scoring or behavior trees only when the
    rules demonstrate a concrete limitation.
-5. **Population change:** define the smallest explicit lifecycle rule that
-   produces meaningful population changes without making births/deaths a broad
-   demographic system.
-6. **Persistence:** design a boundary but defer save format, database, and
-   background/offline catch-up semantics until persistence requirements are
-   concrete.
+5. **Population change (Agreed, decision 0007):** food-driven births and
+   starvation, the smallest explicit lifecycle rule.
+6. **Persistence (Agreed, decision 0008):** a minimal versioned save/load is
+   in scope for #6; database and offline catch-up semantics remain deferred.
 7. **Multiplayer:** keep commands, observations, stable IDs, and region seams
    suitable for future authority boundaries; defer protocols, distributed
    ownership, and synchronization.
-8. **Determinism scope:** confirm whether the requirement is same-build
-   reproducibility first or bit-for-bit cross-platform outcomes. Floating-point
-   calculations and standard-library behavior may affect the latter.
+8. **Determinism scope (Agreed, decision 0004):** same-build reproducibility
+   first; cross-platform bit-for-bit results are not yet promised.
 9. **Mobile/performance targets:** no hardware budget is specified yet. Measure
    after the first domain slice before selecting data-oriented or
    multithreaded complexity.
 
 ## Not in the first milestone
 
-No SDL client, graphics, audio, navigation/pathfinding, trade between
+No SDL client, graphics, audio, trade between
 settlements, regional aggregates, fidelity transitions, networking,
 multiplayer hosting, full calendar/seasons, external content parser,
 database, or comprehensive persistence implementation.

@@ -2,9 +2,12 @@
 
 **Status:** The nine feature issues are open in GitHub. Their scopes come from
 [`plans/0001-headless-world-initiation.md`](plans/0001-headless-world-initiation.md)
-and [`plans/0002-proposed-development-roadmap.md`](plans/0002-proposed-development-roadmap.md),
-which remain proposals. Review their open design questions before substantial
-implementation.
+and [`plans/0002-proposed-development-roadmap.md`](plans/0002-proposed-development-roadmap.md).
+Features #2-#6 and #10 are broken into task issues in
+[`plans/0003-non-ui-task-plan.md`](plans/0003-non-ui-task-plan.md), with design
+questions resolved in decisions 0003-0008. Features #7-#9 (SDL3, visualization,
+player RPG) are deferred until the headless features are complete and have no
+task issues yet.
 
 The linked issues contain these descriptions, acceptance criteria, and design
 notes.
@@ -37,6 +40,10 @@ roadmap.
 Resolve relevant open design questions and update decision records before
 substantial implementation.
 
+### Tasks
+
+Task issues: #15, #18 (done), #22-#28. Decisions: 0003, 0004.
+
 ## 2. Feature: Model the world and its locations ([#3](https://github.com/pulbhaba/elmford/issues/3))
 
 ### Description
@@ -61,6 +68,14 @@ is Eldoria with Greenvale and Oakridge.
 Resolve the navigation question in the roadmap and applicable architecture
 questions in the initiation plan.
 
+### Agreed decisions
+
+Basic pathfinding is included ([decision 0005](decisions/0005-navigation.md)).
+
+### Tasks
+
+Task issues: #29-#34.
+
 ## 3. Feature: Simulate individual characters ([#4](https://github.com/pulbhaba/elmford/issues/4))
 
 ### Description
@@ -83,6 +98,10 @@ the attributes and state needed for later autonomous behavior.
 
 Resolve the initiation plan's open design questions before substantial
 implementation.
+
+### Tasks
+
+Task issues: #35-#41. Decisions: 0004, 0006.
 
 ## 4. Feature: Run an autonomous settlement ([#5](https://github.com/pulbhaba/elmford/issues/5))
 
@@ -109,6 +128,14 @@ occupations, needs, and resource production and consumption.
 Confirm the initiation plan's time, numeric, behavior, and lifecycle decisions
 before substantial implementation.
 
+### Agreed decisions
+
+Food-driven births and starvation; prioritized rules; compiled-in content (decisions 0006, 0007).
+
+### Tasks
+
+Task issues: #42-#51.
+
 ## 5. Feature: Integrate simulation systems and observability ([#6](https://github.com/pulbhaba/elmford/issues/6))
 
 ### Description
@@ -123,13 +150,21 @@ simulation behavior observable through events, statistics, and profiling.
   giving presentation code mutable domain state.
 - Headless runs report results over longer durations and have documented
   performance measurements.
-- The save/load architecture is evaluated and documented. Working persistence
-  remains separate unless its scope is agreed.
+- The save/load architecture is evaluated and documented, and a minimal
+  versioned save/load round-trips deterministically.
 - Integration coverage verifies coordination and repeatable observations.
 
 ### Design notes
 
 Refine duration and performance targets before implementation.
+
+### Agreed decisions
+
+A minimal versioned save/load is in scope, in addition to the architecture evaluation; target is 100 inhabitants over 30 world days (decision 0008).
+
+### Tasks
+
+Task issues: #52-#60.
 
 ## 6. Feature: Establish the graphical application foundation ([#7](https://github.com/pulbhaba/elmford/issues/7))
 
@@ -231,3 +266,7 @@ presenting unresolved design choices as settled.
 
 The roadmap and initiation plan remain proposals. Resolve their outstanding
 questions through review before substantial simulation implementation.
+
+### Task issues
+
+Task issues: #20, #21 (plus completed #12, #14).

@@ -45,8 +45,9 @@ cmake --build --preset runtime
 ./build/fantasy_sim --seed 12345 --ticks 1000
 ```
 
-Both arguments are optional. The defaults are seed `0` and `1000` ticks. Each
-tick advances simulation time by 1 ms. The output includes the seed, executed
+The arguments are optional. The defaults are seed `0` and `1000` ticks. Each
+tick advances simulation time by one world-second (1,000,000,000 ns); use
+`--step-ns 1000000` for 1 ms steps. The output includes the seed, executed
 step count, final simulation time, wall-clock execution duration, update count,
 and a deterministic checksum from one random draw per update. The duration can
 vary between runs; simulation results and checksum remain stable for identical
@@ -67,18 +68,56 @@ headless CLI is a batch runner and still computes requested ticks as quickly as
 possible; `--step-ns` changes the simulated duration of each tick, not its
 wall-clock runtime.
 
+`fantasy::core::validate(config)` returns a list of readable error messages
+(empty when valid). It requires a positive tick count, a positive fixed step, a
+positive world-day duration that is an exact multiple of the fixed step, and a
+positive real-time duration per world day. The CLI validates before running,
+prints each error to standard error, and exits with code 2; for example,
+`--step-ns 7` is rejected because 7 ns does not divide a 24-hour world day.
+
+## CMake targets
+
+- `fantasy_sim::infrastructure` holds the clock, random streams, and logging.
+  It never links the simulation target.
+- `fantasy_sim::simulation` holds domain code (currently the runner) and links
+  infrastructure one-way.
+- `fantasy_sim::core` is a compatibility alias that resolves to simulation.
+- No target links SDL or any graphics dependency.
+
 ## Core interfaces
 
 - `SimulationClock` owns integer simulation time and a positive fixed step.
+- `world_time_from` (simulation target) derives `WorldTime` (day index, hour,
+  minute, time of day) from clock time and the world-day duration with integer
+  math; units and flooring rules are documented in `world_calendar.hpp`. The
+  calendar is a 24-hour day only.
 - `RandomStream` owns its generator state; stream IDs derive independent,
-  repeatable streams from a world seed.
-- `SimulationRunner` owns a clock and default random stream and calls a supplied
-  update function once per step.
+  repeatable streams from a world seed. `derive_stream_id` / `derive_stream`
+  (infrastructure target) map (world seed, system id, optional entity id) to a
+  stream with documented mixing; this is the domain contract, so adding an
+  entity or system never changes another stream. Pass a stable system id such
+  as `static_cast<std::uint64_t>(SimulationSystem::needs)`.
+- `SimulationRunner` owns a clock, a single mutable default random stream
+  (foundation-only, not the domain contract; domain code should use derived
+  streams), and a `TickScheduler`,
+  and calls a supplied update function once per step.
+- `TickScheduler` (simulation target) runs registered systems each tick in the
+  fixed phase order defined by `tick_phase_order` in `tick_scheduler.hpp`:
+  commands, needs, activities, resolution, lifecycle. The runner then advances
+  time. Systems in a phase run in registration order, and a system registered
+  with a cadence key runs only when `is_due` holds for the zero-based tick.
+  With no systems registered, runner behavior is unchanged.
 - `Logger` writes informational, warning, and error records to a supplied
   output stream, optionally including current simulation time.
 
 Determinism details and floating-point limitations are recorded in
 [`docs/decisions/0001-determinism.md`](docs/decisions/0001-determinism.md).
+The guarantee is same-build reproducibility: the same seed, configuration, and
+build give identical integer domain state. Cross-platform bit-for-bit results
+are not yet promised. Fixed-seed golden-value tests in
+`tests/core/golden_determinism_tests.cpp` cover the scheduler, cadence gating,
+derived random streams, and calendar time; see
+[`docs/decisions/0004-numerics-and-determinism-scope.md`](docs/decisions/0004-numerics-and-determinism-scope.md).
 World-day pacing is recorded in
 [`docs/decisions/0002-world-day-pacing.md`](docs/decisions/0002-world-day-pacing.md).
 

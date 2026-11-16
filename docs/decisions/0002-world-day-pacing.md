@@ -9,8 +9,8 @@ changing the deterministic fixed simulation step.
 The headless CLI remains a batch runner and executes requested ticks as quickly
 as possible. Real-time pacing belongs to an application loop that schedules
 fixed simulation steps; wall-clock duration does not alter simulation state.
-The fixed-step default remains the current 1 ms until a later domain milestone
-chooses an appropriate update quantum and cadence.
+The fixed-step default was originally 1 ms and changed to one world-second
+(decision 0003, task #62).
 
 This decision fixes the default day-to-real-time mapping. It does not choose
 calendar rules beyond a 24-hour day or define sleep, pausing, or offline

@@ -1,7 +1,9 @@
 # Proposed development roadmap
 
-**Status:** Proposed. This roadmap describes a staged direction for Elmford;
-the stage boundaries, scope, and deliverables remain open for review.
+**Status:** Proposed. This roadmap describes a staged direction for Elmford.
+Stages 1-5 are broken into task issues in
+[`0003-non-ui-task-plan.md`](0003-non-ui-task-plan.md); Stages 6-8 (SDL3,
+visualization, RPG) are deferred until the headless stages are complete.
 
 ## Purpose
 
@@ -96,12 +98,12 @@ Bring the simulation subsystems together and make their behavior observable.
 - Statistical reporting.
 - Longer-duration simulation tests.
 - Performance profiling.
-- Save/load architecture evaluation.
+- Save/load architecture evaluation and a minimal versioned save/load
+  (agreed in decision 0008).
 
 **Deliverable:** An observable headless world simulation that can run for
-longer periods, with the save/load architecture evaluated. Implementing
-persistence remains a separate decision unless it is added to this stage's
-scope.
+longer periods, with a documented save/load architecture and a minimal
+versioned save/load that round-trips deterministically.
 
 ## Stage 6 – Game Application Foundation
 
@@ -166,18 +168,22 @@ rather than controlling the entire settlement.
   domain updates and observability on top of that foundation.
 - The roadmap is an ordering proposal, not a delivery schedule. Stage details
   should be refined before substantial implementation of each stage.
-- The deliverable for Stage 5 describes observability and a save/load
-  architecture evaluation. It does not promise working save/load support.
+- Stage 5 includes a minimal save/load (decision 0008); databases, offline
+  catch-up, and multiplayer synchronization are not included.
 
 ## Outstanding questions
 
-1. Should Stage 2 include basic pathfinding, or should navigation be deferred
-   until characters need to move between locations?
-2. What population or resource behavior should count as “basic settlement
-   growth” in Stage 4?
-3. Should Stage 5 implement persistence, or only evaluate and document a
-   persistence design?
-4. What simulation duration and performance targets should Stage 5 use for
-   longer-duration runs and profiling?
+Resolved (see decisions 0003-0008 and plan 0003):
+
+1. Stage 2 includes basic pathfinding ([decision 0005](../decisions/0005-navigation.md)).
+2. "Basic settlement growth" means food-driven births and starvation
+   ([decision 0007](../decisions/0007-settlement-lifecycle.md)).
+3. Stage 5 implements a minimal versioned save/load
+   ([decision 0008](../decisions/0008-persistence-and-performance-targets.md)).
+4. Stage 5 targets 100 inhabitants over 30 world days, measured with no CI gate
+   (decision 0008).
+
+Still open (deferred with Stages 6-8):
+
 5. What is the minimum interaction expected in Stage 6 before the visual
    representation work in Stage 7?

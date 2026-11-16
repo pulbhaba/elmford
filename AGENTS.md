@@ -81,6 +81,37 @@ validation, and pull requests.
 If GitHub access is unavailable, keep the
 reviewable work ready locally and report the exact blocked external action.
 
+## Delivering a feature as a stacked series with subagents
+
+Use this when asked to complete a feature or several tasks in one session. It
+keeps the main session's context and cost small while each MR stays tiny.
+
+- **Orchestrator** (main session): read the feature issue and
+  `docs/plans/` task table once, fix the task order from the "Blocked by"
+  column, then delegate one task at a time. It does not read source files or
+  diffs itself beyond a final check of each agent's report.
+- **One subagent per task**, each starting with a fresh context. Run them
+  **sequentially**; start the next only after the previous reports its PR.
+  Run agents in parallel only for tasks with no dependency on each other and
+  no shared files, never for tasks in the same stack.
+- **Brief** (the agent knows nothing else): task issue number, the base
+  branch, the instruction to follow this file, `README.md`, and the relevant
+  decision records, explicit scope limits (acceptance criteria only), and the
+  required report. Point at files by path; do not paste their contents.
+- **Report** (at most ten lines): branch, PR URL, files changed, exact
+  validation commands and results, and any blocker or deviation. The
+  orchestrator carries only this forward.
+- **Stacking**: the first branch starts from the latest `origin/develop`; each
+  later branch starts from the previous task's branch. Open each PR against
+  the previous branch so its diff shows only that task, and state the
+  dependency in the PR body. Merge in order; after a base merges, retarget
+  the next PR to `develop`. Never push to `develop`.
+- **Stop conditions**: if validation fails, the plan needs a decision, or a
+  dependency is unresolved, the agent stops and reports instead of widening
+  scope. The orchestrator then decides whether to continue the series.
+- Choose a lower reasoning effort for mechanical tasks (renames, docs,
+  CMake wiring) and keep default effort for domain logic.
+
 ## Project constraints
 
 - Use C++20, CMake, and Catch2. Prefer the standard library and small,

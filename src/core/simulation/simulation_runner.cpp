@@ -6,7 +6,7 @@
 namespace fantasy::core {
 
 SimulationRunner::SimulationRunner(SimulationConfig config)
-    : seed_(config.seed), clock_(config.fixed_step), random_(config.seed) {}
+    : config_(config), seed_(config.seed), clock_(config.fixed_step), random_(config.seed) {}
 
 SimulationRunner::SimulationRunner(std::uint64_t seed, SimulationClock::Duration fixed_step)
     : SimulationRunner(SimulationConfig{.seed = seed, .fixed_step = fixed_step}) {}
@@ -17,6 +17,10 @@ const SimulationClock& SimulationRunner::clock() const noexcept {
 
 RandomStream& SimulationRunner::random() noexcept {
     return random_;
+}
+
+TickScheduler& SimulationRunner::scheduler() noexcept {
+    return scheduler_;
 }
 
 std::uint64_t SimulationRunner::seed() const noexcept {
@@ -30,6 +34,8 @@ SimulationStats SimulationRunner::run(std::uint64_t steps, const Update& update)
 
     const auto start = std::chrono::steady_clock::now();
     for (std::uint64_t step = 0; step < steps; ++step) {
+        // Phases run for the zero-based tick, then time advances.
+        scheduler_.run_tick(config_, clock_.tick_index(), clock_, random_);
         clock_.advance();
         update(clock_, random_);
     }

@@ -93,8 +93,14 @@ prints each error to standard error, and exits with code 2; for example,
   calendar is a 24-hour day only.
 - `RandomStream` owns its generator state; stream IDs derive independent,
   repeatable streams from a world seed.
-- `SimulationRunner` owns a clock and default random stream and calls a supplied
-  update function once per step.
+- `SimulationRunner` owns a clock, default random stream, and a `TickScheduler`,
+  and calls a supplied update function once per step.
+- `TickScheduler` (simulation target) runs registered systems each tick in the
+  fixed phase order defined by `tick_phase_order` in `tick_scheduler.hpp`:
+  commands, needs, activities, resolution, lifecycle. The runner then advances
+  time. Systems in a phase run in registration order, and a system registered
+  with a cadence key runs only when `is_due` holds for the zero-based tick.
+  With no systems registered, runner behavior is unchanged.
 - `Logger` writes informational, warning, and error records to a supplied
   output stream, optionally including current simulation time.
 

@@ -19,6 +19,7 @@ questions.
 | Numerics | Integer canonical state, fixed-scale needs, checked arithmetic | [0004](../decisions/0004-numerics-and-determinism-scope.md) |
 | Determinism | Same-build reproducibility first; cross-platform not yet promised | [0004](../decisions/0004-numerics-and-determinism-scope.md) |
 | Navigation | Location graph plus deterministic Dijkstra pathfinding in #3 | [0005](../decisions/0005-navigation.md) |
+| Naming | Suffix-based place names with seeded prefixes (proposed) | [0009](../decisions/0009-place-naming.md), [plan 0004](0004-place-naming.md) |
 | Content | Compiled-in C++ definitions behind registries | [0006](../decisions/0006-content-and-behavior.md) |
 | Behavior | Prioritized explicit rules | [0006](../decisions/0006-content-and-behavior.md) |
 | Population | Food-driven births and starvation | [0007](../decisions/0007-settlement-lifecycle.md) |
@@ -66,7 +67,7 @@ the suggested order is top to bottom.
 | #30 | World, region, settlement, location state | #29 |
 | #31 | Location connections | #30 |
 | #32 | Deterministic pathfinding | #31 |
-| #33 | Eldoria example world | #32 |
+| #33 | Aveloria example world | #32 |
 | #34 | CLI world overview | #33 |
 
 ### Feature #4: Simulate individual characters
@@ -123,7 +124,7 @@ state.
 
 ## Milestone
 
-Features #2-#6 together deliver plan 0001's milestone: a seeded Eldoria
+Features #2-#6 together deliver plan 0001's milestone: a seeded Aveloria
 settlement with individually simulated inhabitants running for several world
 days headless, with summaries, events, statistics, a 100-inhabitant/30-day
 measured run, and minimal save/load.

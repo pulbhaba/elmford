@@ -43,9 +43,8 @@ validation, and pull requests.
    task beneath it. For a new feature list, create one feature issue and one
    clearly scoped task issue per deliverable.
 3. Assign the task issue to the task owner. Post one concise start comment
-   with relevant blockers or related issues. Elmford tracks work through
-   issues, sub-issues, and pull requests in this repository, not GitHub
-   Projects.
+   with relevant blockers or related issues. Elmford tracks features and
+   tasks as issues and sub-issues in this repository.
 4. Start every task branch from the latest `origin/develop`: fetch from
    `origin`, update local `develop` with a fast-forward only, then create a
    focused branch. Use `feat/ISSUE_NUMBER-short-description`,
@@ -79,7 +78,7 @@ validation, and pull requests.
    blockers. Do not request merge or mark the issue complete until required
    checks and approvals pass.
 
-If GitHub access or a required repository operation is unavailable, keep the
+If GitHub access is unavailable, keep the
 reviewable work ready locally and report the exact blocked external action.
 
 ## Project constraints

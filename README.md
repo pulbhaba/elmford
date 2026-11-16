@@ -92,14 +92,32 @@ prints each error to standard error, and exits with code 2; for example,
   math; units and flooring rules are documented in `world_calendar.hpp`. The
   calendar is a 24-hour day only.
 - `RandomStream` owns its generator state; stream IDs derive independent,
-  repeatable streams from a world seed.
-- `SimulationRunner` owns a clock and default random stream and calls a supplied
-  update function once per step.
+  repeatable streams from a world seed. `derive_stream_id` / `derive_stream`
+  (infrastructure target) map (world seed, system id, optional entity id) to a
+  stream with documented mixing; this is the domain contract, so adding an
+  entity or system never changes another stream. Pass a stable system id such
+  as `static_cast<std::uint64_t>(SimulationSystem::needs)`.
+- `SimulationRunner` owns a clock, a single mutable default random stream
+  (foundation-only, not the domain contract; domain code should use derived
+  streams), and a `TickScheduler`,
+  and calls a supplied update function once per step.
+- `TickScheduler` (simulation target) runs registered systems each tick in the
+  fixed phase order defined by `tick_phase_order` in `tick_scheduler.hpp`:
+  commands, needs, activities, resolution, lifecycle. The runner then advances
+  time. Systems in a phase run in registration order, and a system registered
+  with a cadence key runs only when `is_due` holds for the zero-based tick.
+  With no systems registered, runner behavior is unchanged.
 - `Logger` writes informational, warning, and error records to a supplied
   output stream, optionally including current simulation time.
 
 Determinism details and floating-point limitations are recorded in
 [`docs/decisions/0001-determinism.md`](docs/decisions/0001-determinism.md).
+The guarantee is same-build reproducibility: the same seed, configuration, and
+build give identical integer domain state. Cross-platform bit-for-bit results
+are not yet promised. Fixed-seed golden-value tests in
+`tests/core/golden_determinism_tests.cpp` cover the scheduler, cadence gating,
+derived random streams, and calendar time; see
+[`docs/decisions/0004-numerics-and-determinism-scope.md`](docs/decisions/0004-numerics-and-determinism-scope.md).
 World-day pacing is recorded in
 [`docs/decisions/0002-world-day-pacing.md`](docs/decisions/0002-world-day-pacing.md).
 

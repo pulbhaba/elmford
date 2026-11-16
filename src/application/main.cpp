@@ -63,6 +63,12 @@ Options parse_options(int argc, char* argv[]) {
 int main(int argc, char* argv[]) {
     try {
         const auto options = parse_options(argc, argv);
+        if (const auto errors = fantasy::core::validate(options.simulation); !errors.empty()) {
+            for (const auto& error : errors) {
+                std::cerr << "[ERROR] invalid configuration: " << error << '\n';
+            }
+            return 2;
+        }
         fantasy::core::SimulationRunner runner{options.simulation};
         std::uint64_t checksum = 0;
 

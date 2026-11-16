@@ -64,6 +64,7 @@ if(FANTASY_SIM_BUILD_TESTS)
         tests/core/simulation_config_tests.cpp
         tests/core/tick_scheduler_tests.cpp
         tests/core/world_calendar_tests.cpp
+        tests/core/golden_determinism_tests.cpp
         tests/core/logger_tests.cpp
     )
     target_link_libraries(fantasy_sim_tests PRIVATE fantasy_sim::core Catch2::Catch2WithMain)

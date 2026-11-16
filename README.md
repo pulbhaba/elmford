@@ -112,6 +112,12 @@ prints each error to standard error, and exits with code 2; for example,
 
 Determinism details and floating-point limitations are recorded in
 [`docs/decisions/0001-determinism.md`](docs/decisions/0001-determinism.md).
+The guarantee is same-build reproducibility: the same seed, configuration, and
+build give identical integer domain state. Cross-platform bit-for-bit results
+are not yet promised. Fixed-seed golden-value tests in
+`tests/core/golden_determinism_tests.cpp` cover the scheduler, cadence gating,
+derived random streams, and calendar time; see
+[`docs/decisions/0004-numerics-and-determinism-scope.md`](docs/decisions/0004-numerics-and-determinism-scope.md).
 World-day pacing is recorded in
 [`docs/decisions/0002-world-day-pacing.md`](docs/decisions/0002-world-day-pacing.md).
 

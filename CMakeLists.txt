@@ -19,7 +19,9 @@ target_compile_features(fantasy_sim_infrastructure PUBLIC cxx_std_20)
 
 # Simulation: domain code. Links infrastructure one-way.
 add_library(fantasy_sim_simulation
+    src/core/config/simulation_config.cpp
     src/core/simulation/simulation_runner.cpp
+    src/core/simulation/tick_scheduler.cpp
     src/core/time/world_calendar.cpp
 )
 add_library(fantasy_sim::simulation ALIAS fantasy_sim_simulation)
@@ -60,7 +62,9 @@ if(FANTASY_SIM_BUILD_TESTS)
         tests/core/random_stream_tests.cpp
         tests/core/simulation_runner_tests.cpp
         tests/core/simulation_config_tests.cpp
+        tests/core/tick_scheduler_tests.cpp
         tests/core/world_calendar_tests.cpp
+        tests/core/golden_determinism_tests.cpp
         tests/core/logger_tests.cpp
     )
     target_link_libraries(fantasy_sim_tests PRIVATE fantasy_sim::core Catch2::Catch2WithMain)

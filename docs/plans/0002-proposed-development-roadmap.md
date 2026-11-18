@@ -49,7 +49,7 @@ Establish the geographical structure of the world.
 - Navigation graph.
 - Basic pathfinding.
 
-**Deliverable:** Eldoria containing Greenvale and Oakridge, with interconnected
+**Deliverable:** Aveloria containing Marale and Brelin, with interconnected
 locations.
 
 ## Stage 3 – Character Model

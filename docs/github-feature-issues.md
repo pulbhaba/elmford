@@ -50,13 +50,13 @@ Task issues: #15, #18 (done), #22-#28, #62. Decisions: 0003, 0004.
 
 Add the geographical model that contains regions, settlements, and locations,
 with stable identities and explicit connections. The roadmap's example world
-is Eldoria with Greenvale and Oakridge.
+is Aveloria with Marale and Brelin.
 
 ### Acceptance criteria
 
 - A world can own regions, and regions can contain settlements and locations.
 - Regions, settlements, and locations use stable typed identifiers.
-- The example world can represent Greenvale and Oakridge with interconnected
+- The example world can represent Marale and Brelin with interconnected
   locations.
 - Navigation behavior and whether basic pathfinding belongs in this feature are
   agreed and documented before implementation. If pathfinding is included, its

@@ -1,7 +1,7 @@
 # Non-UI feature and task plan
 
 **Status:** Agreed scope for the headless milestone (features #2-#6 and #10).
-Implementation has not started beyond tasks #15 and #18. UI, SDL3, and
+Implementation is in progress; see Progress. UI, SDL3, and
 game-engine features (#7 graphical foundation, #8 visualization, #9 player
 RPG) are **deferred** until the headless features are complete; they will get
 their own task breakdown then.
@@ -131,6 +131,11 @@ measured run, and minimal save/load.
 
 ## Progress
 
+- 2026-11-18: Started #29 on `feat/29-typed-stable-identifiers`; blockers #22
+  and #20 are closed. This task precedes world state (#30) and character IDs
+  (#35).
+- 2026-11-18: Completed #29's typed IDs and deterministic allocator. The
+  default headless configure/build and all 43 Catch2 tests pass.
 - 2026-11-16: Decisions agreed; task issues #20-#60 created under their
   features. Default step changed to one world-second (#62). No implementation yet beyond #15 and #18.
 - 2026-11-16: #28 adds golden determinism tests and docs (same-build only), the last task of feature #2 (after #26 and #27).

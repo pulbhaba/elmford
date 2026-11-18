@@ -86,6 +86,12 @@ prints each error to standard error, and exits with code 2; for example,
 
 ## Core interfaces
 
+- `StableId<Tag>` provides distinct `RegionId`, `SettlementId`, and `LocationId`
+  types. IDs compare and hash by their `uint64_t` value; the maximum value is
+  reserved for invalid IDs, including default-constructed IDs.
+- `StableIdAllocator<Id>` allocates IDs from zero in call order. Each ID type
+  has its own allocator; allocation throws `std::overflow_error` rather than
+  returning the invalid sentinel when the value range is exhausted.
 - `SimulationClock` owns integer simulation time and a positive fixed step.
 - `world_time_from` (simulation target) derives `WorldTime` (day index, hour,
   minute, time of day) from clock time and the world-day duration with integer

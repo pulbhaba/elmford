@@ -2,6 +2,7 @@
 
 #include "core/simulation/stable_id.hpp"
 
+#include <cstdint>
 #include <map>
 #include <optional>
 #include <string>
@@ -17,6 +18,20 @@ enum class AddResult {
     unknown_region, // the parent region does not exist
     empty_name,     // a name was supplied but is empty
 };
+
+// Outcome of connecting two locations. Anything other than `connected` leaves
+// the world unchanged.
+enum class ConnectResult {
+    connected,
+    unknown_location,  // an endpoint is invalid or not in the world
+    self_connection,   // both endpoints are the same location
+    duplicate,         // the two locations are already connected
+    non_positive_cost, // the travel cost is zero or negative
+};
+
+// Travel cost of a connection, in world-seconds (decision 0003): the time an
+// inhabitant needs to walk between the two locations. Always positive.
+using TravelCost = std::int64_t;
 
 // Names are optional: an unnamed place is identified by its ID alone
 // (decision 0009). A supplied name must be non-empty.
@@ -75,6 +90,22 @@ public:
     [[nodiscard]] const Settlement* find_settlement(SettlementId id) const noexcept;
     [[nodiscard]] const Location* find_location(LocationId id) const noexcept;
 
+    // Connects two existing locations (in any regions) with a positive travel
+    // cost in world-seconds. A connection is undirected: it is traversable
+    // both ways at the same cost, and connecting (a, b) then (b, a) is a
+    // duplicate. The navigation graph is owned by the world.
+    ConnectResult connect(LocationId a, LocationId b, TravelCost cost);
+
+    [[nodiscard]] bool are_connected(LocationId a, LocationId b) const noexcept;
+
+    // Travel cost in world-seconds between two connected locations, or
+    // nullopt when they are not connected.
+    [[nodiscard]] std::optional<TravelCost> travel_cost(LocationId a, LocationId b) const noexcept;
+
+    // Neighbors of a location with their travel costs, ordered by ascending
+    // destination ID. Empty for an unknown or unconnected location.
+    [[nodiscard]] const std::map<LocationId, TravelCost>& neighbors(LocationId id) const noexcept;
+
     // Owning region of a settlement or location; invalid ID when unknown.
     [[nodiscard]] RegionId region_of(SettlementId id) const noexcept;
     [[nodiscard]] RegionId region_of(LocationId id) const noexcept;
@@ -85,6 +116,7 @@ private:
     std::map<RegionId, Region> regions_;
     std::map<SettlementId, RegionId> settlement_regions_;
     std::map<LocationId, RegionId> location_regions_;
+    std::map<LocationId, std::map<LocationId, TravelCost>> connections_;
 };
 
 } // namespace fantasy::core

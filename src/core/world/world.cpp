@@ -42,6 +42,36 @@ AddResult World::add_location(RegionId region, LocationId id, PlaceName name) {
     return AddResult::added;
 }
 
+ConnectResult World::connect(LocationId a, LocationId b, TravelCost cost) {
+    if (!location_regions_.contains(a) || !location_regions_.contains(b)) {
+        return ConnectResult::unknown_location;
+    }
+    if (a == b) return ConnectResult::self_connection;
+    if (cost <= 0) return ConnectResult::non_positive_cost;
+    if (are_connected(a, b)) return ConnectResult::duplicate;
+    connections_[a].emplace(b, cost);
+    connections_[b].emplace(a, cost);
+    return ConnectResult::connected;
+}
+
+bool World::are_connected(LocationId a, LocationId b) const noexcept {
+    return travel_cost(a, b).has_value();
+}
+
+std::optional<TravelCost> World::travel_cost(LocationId a, LocationId b) const noexcept {
+    const auto from = connections_.find(a);
+    if (from == connections_.end()) return std::nullopt;
+    const auto to = from->second.find(b);
+    if (to == from->second.end()) return std::nullopt;
+    return to->second;
+}
+
+const std::map<LocationId, TravelCost>& World::neighbors(LocationId id) const noexcept {
+    static const std::map<LocationId, TravelCost> none;
+    const auto it = connections_.find(id);
+    return it == connections_.end() ? none : it->second;
+}
+
 const Region* World::find_region(RegionId id) const noexcept {
     const auto it = regions_.find(id);
     return it == regions_.end() ? nullptr : &it->second;

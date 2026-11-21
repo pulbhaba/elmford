@@ -24,6 +24,7 @@ add_library(fantasy_sim_simulation
     src/core/simulation/tick_scheduler.cpp
     src/core/time/world_calendar.cpp
     src/core/world/world.cpp
+    src/core/world/pathfinding.cpp
 )
 add_library(fantasy_sim::simulation ALIAS fantasy_sim_simulation)
 target_link_libraries(fantasy_sim_simulation PUBLIC fantasy_sim::infrastructure)
@@ -69,6 +70,7 @@ if(FANTASY_SIM_BUILD_TESTS)
         tests/core/logger_tests.cpp
         tests/core/stable_id_tests.cpp
         tests/core/world_tests.cpp
+        tests/core/pathfinding_tests.cpp
     )
     target_link_libraries(fantasy_sim_tests PRIVATE fantasy_sim::core Catch2::Catch2WithMain)
     if(MSVC)

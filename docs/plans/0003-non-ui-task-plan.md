@@ -131,6 +131,9 @@ measured run, and minimal save/load.
 
 ## Progress
 
+- 2026-11-21: Implemented #32 on `feat/32-pathfinding` (stacked on #31):
+  `find_path` Dijkstra with integer costs, lexicographically-lowest-ID
+  tie-break, and explicit same-location, unreachable, and unknown results.
 - 2026-11-21: Implemented #31 on `feat/31-location-connections` (stacked on
   #30): undirected `World::connect` with positive world-second travel costs,
   rejection results, and ID-ordered `neighbors`. Pathfinding remains #32.

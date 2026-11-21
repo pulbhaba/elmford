@@ -1,7 +1,5 @@
 #include "core/world/world_overview.hpp"
 
-#include <algorithm>
-#include <set>
 #include <sstream>
 
 namespace fantasy::core {
@@ -20,32 +18,22 @@ std::string label(const char* kind, Id id, const PlaceName& name) {
 
 } // namespace
 
-std::string describe_world(const AveloriaWorld& aveloria) {
-    const World& world = aveloria.world;
+std::string describe_world(const World& world) {
     std::ostringstream out;
 
     for (const auto& [region_id, region] : world.regions()) {
         out << label("Region", region_id, region.name()) << '\n';
 
-        std::set<LocationId> grouped;
         for (const auto& [settlement_id, settlement] : region.settlements()) {
             out << "  " << label("Settlement", settlement_id, settlement.name) << '\n';
-            const auto& ids = settlement_id == aveloria.marale ? aveloria.marale_locations
-                              : settlement_id == aveloria.brelin ? aveloria.brelin_locations
-                                                                 : std::vector<LocationId>{};
-            std::vector<LocationId> sorted{ids};
-            std::sort(sorted.begin(), sorted.end());
-            for (const LocationId id : sorted) {
-                grouped.insert(id);
-                if (const Location* location = world.find_location(id)) {
-                    out << "    " << label("Location", id, location->name) << '\n';
-                }
+            for (const LocationId id : world.locations_of(settlement_id)) {
+                out << "    " << label("Location", id, world.find_location(id)->name) << '\n';
             }
         }
 
         bool header = false;
         for (const auto& [location_id, location] : region.locations()) {
-            if (grouped.count(location_id) != 0) {
+            if (location.settlement) {
                 continue;
             }
             if (!header) {

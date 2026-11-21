@@ -1,5 +1,6 @@
 #include "core/config/simulation_config.hpp"
 #include "core/simulation/simulation_runner.hpp"
+#include "core/world/aveloria.hpp"
 #include "core/world/world_overview.hpp"
 
 #include <charconv>
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
     try {
         const auto options = parse_options(argc, argv);
         if (options.describe_world) {
-            std::cout << fantasy::core::describe_world(fantasy::core::build_aveloria_world());
+            std::cout << fantasy::core::describe_world(fantasy::core::build_aveloria_world().world);
             return 0;
         }
         if (const auto errors = fantasy::core::validate(options.simulation); !errors.empty()) {

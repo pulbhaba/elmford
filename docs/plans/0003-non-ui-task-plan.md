@@ -131,6 +131,9 @@ measured run, and minimal save/load.
 
 ## Progress
 
+- 2026-11-21: Implemented #30 on `feat/30-world-state`: `World` with regions,
+  settlements, and locations, ID lookup, ascending-ID iteration, rejection
+  results, optional names, and Catch2 coverage. Connections remain #31.
 - 2026-11-18: Started #29 on `feat/29-typed-stable-identifiers`; blockers #22
   and #20 are closed. This task precedes world state (#30) and character IDs
   (#35).

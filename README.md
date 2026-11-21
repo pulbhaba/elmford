@@ -92,6 +92,14 @@ prints each error to standard error, and exits with code 2; for example,
 - `StableIdAllocator<Id>` allocates IDs from zero in call order. Each ID type
   has its own allocator; allocation throws `std::overflow_error` rather than
   returning the invalid sentinel when the value range is exhausted.
+- `World` (simulation target, `core/world/world.hpp`) owns regions; each
+  region owns its settlements and locations. Lookup is by typed ID
+  (`find_*` returns `nullptr` when unknown) and iteration is by ascending ID,
+  not insertion order. IDs are unique per type across the world. `add_*`
+  returns an `AddResult` and changes nothing unless it is `added`; rejections
+  are invalid ID, duplicate ID, unknown parent region, and empty name. Names
+  are optional (`std::optional<std::string>`); an unnamed place is identified
+  by ID alone. Connections between locations are not modelled yet.
 - `SimulationClock` owns integer simulation time and a positive fixed step.
 - `world_time_from` (simulation target) derives `WorldTime` (day index, hour,
   minute, time of day) from clock time and the world-day duration with integer

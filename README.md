@@ -53,6 +53,14 @@ and a deterministic checksum from one random draw per update. The duration can
 vary between runs; simulation results and checksum remain stable for identical
 inputs.
 
+Use `--describe-world` to print the Aveloria example world (its region,
+settlements, locations, and connections) in a stable order and exit; the
+output is identical on every run, and the simulation arguments are ignored:
+
+```sh
+./build/fantasy_sim --describe-world
+```
+
 Use `fantasy_sim --help` to show the supported arguments. Invalid arguments
 produce an error on standard error and a non-zero exit code.
 

@@ -131,6 +131,12 @@ measured run, and minimal save/load.
 
 ## Progress
 
+- 2026-11-21: Implemented #34 on `feat/34-cli-world-overview` (stacked on
+  #33): `--describe-world` prints the Aveloria region, settlements,
+  locations, and connections in ascending-ID order via `describe_world`
+  (uses the builder's per-village location lists; `World` unchanged). This is
+  the last task of feature #3; the feature is complete pending merge of the
+  stacked PRs #82-#85 and this one.
 - 2026-11-21: Implemented #33 on `feat/33-aveloria-world` (stacked on #32):
   compiled-in `build_aveloria_world` (Aveloria; Marale, Brelin; seven named
   locations joined by Aveloria Road) with structure, cross-settlement path,

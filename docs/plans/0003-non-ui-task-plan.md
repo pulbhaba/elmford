@@ -131,6 +131,9 @@ measured run, and minimal save/load.
 
 ## Progress
 
+- 2026-11-21: Implemented #31 on `feat/31-location-connections` (stacked on
+  #30): undirected `World::connect` with positive world-second travel costs,
+  rejection results, and ID-ordered `neighbors`. Pathfinding remains #32.
 - 2026-11-21: Implemented #30 on `feat/30-world-state`: `World` with regions,
   settlements, and locations, ID lookup, ascending-ID iteration, rejection
   results, optional names, and Catch2 coverage. Connections remain #31.

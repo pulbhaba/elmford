@@ -99,7 +99,12 @@ prints each error to standard error, and exits with code 2; for example,
   returns an `AddResult` and changes nothing unless it is `added`; rejections
   are invalid ID, duplicate ID, unknown parent region, and empty name. Names
   are optional (`std::optional<std::string>`); an unnamed place is identified
-  by ID alone. Connections between locations are not modelled yet.
+  by ID alone. `World::connect` links two existing locations with a positive
+  integer travel cost in **world-seconds** (`TravelCost`). Connections are
+  undirected and owned by the world; self-connections, duplicates (either
+  direction), unknown locations, and non-positive costs return a
+  `ConnectResult` other than `connected` and change nothing. `neighbors(id)`
+  iterates by ascending destination ID. Pathfinding is not implemented yet.
 - `SimulationClock` owns integer simulation time and a positive fixed step.
 - `world_time_from` (simulation target) derives `WorldTime` (day index, hour,
   minute, time of day) from clock time and the world-day duration with integer

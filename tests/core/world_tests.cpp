@@ -109,3 +109,62 @@ TEST_CASE("duplicate, invalid, and empty-name additions are rejected") {
     CHECK(world.find_settlement(S(2)) == nullptr);
     CHECK(world.find_location(L(2)) == nullptr);
 }
+
+namespace {
+World connected_world() {
+    World world;
+    world.add_region(R(1));
+    world.add_region(R(2));
+    world.add_location(R(1), L(1));
+    world.add_location(R(1), L(2));
+    world.add_location(R(1), L(3));
+    world.add_location(R(2), L(4));
+    return world;
+}
+} // namespace
+
+TEST_CASE("valid connections are undirected and carry a cost in world-seconds") {
+    World world = connected_world();
+    CHECK(world.connect(L(1), L(2), 30) == ConnectResult::connected);
+    CHECK(world.connect(L(1), L(4), 600) == ConnectResult::connected); // across regions
+
+    CHECK(world.are_connected(L(2), L(1)));
+    CHECK(world.travel_cost(L(1), L(2)) == 30);
+    CHECK(world.travel_cost(L(2), L(1)) == 30);
+    CHECK(world.travel_cost(L(4), L(1)) == 600);
+    CHECK_FALSE(world.are_connected(L(2), L(3)));
+    CHECK_FALSE(world.travel_cost(L(2), L(3)).has_value());
+}
+
+TEST_CASE("invalid connections are rejected and change nothing") {
+    World world = connected_world();
+    REQUIRE(world.connect(L(1), L(2), 30) == ConnectResult::connected);
+
+    CHECK(world.connect(L(1), L(1), 5) == ConnectResult::self_connection);
+    CHECK(world.connect(L(1), L(2), 99) == ConnectResult::duplicate);
+    CHECK(world.connect(L(2), L(1), 99) == ConnectResult::duplicate);
+    CHECK(world.connect(L(1), L(3), 0) == ConnectResult::non_positive_cost);
+    CHECK(world.connect(L(1), L(3), -4) == ConnectResult::non_positive_cost);
+    CHECK(world.connect(L(1), L(99), 5) == ConnectResult::unknown_location);
+    CHECK(world.connect(L(99), L(1), 5) == ConnectResult::unknown_location);
+    CHECK(world.connect(LocationId{}, L(1), 5) == ConnectResult::unknown_location);
+
+    CHECK(world.travel_cost(L(1), L(2)) == 30);
+    CHECK(world.neighbors(L(1)).size() == 1);
+    CHECK(world.neighbors(L(3)).empty());
+}
+
+TEST_CASE("neighbors iterate by ascending destination ID, not insertion order") {
+    World world = connected_world();
+    REQUIRE(world.connect(L(1), L(4), 7) == ConnectResult::connected);
+    REQUIRE(world.connect(L(1), L(2), 5) == ConnectResult::connected);
+    REQUIRE(world.connect(L(3), L(1), 9) == ConnectResult::connected);
+
+    std::vector<std::uint64_t> order;
+    for (const auto& [id, cost] : world.neighbors(L(1))) {
+        CHECK(cost > 0);
+        order.push_back(id.value());
+    }
+    CHECK(order == std::vector<std::uint64_t>{2, 3, 4});
+    CHECK(world.neighbors(L(99)).empty());
+}

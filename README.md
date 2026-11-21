@@ -110,6 +110,15 @@ prints each error to standard error, and exits with code 2; for example,
   `unknown_location`) with the path and total world-second cost. Among
   equal-cost routes it returns the one whose location IDs, read from start to
   goal, are lexicographically smallest.
+- `build_aveloria_world` (`core/world/aveloria.hpp`) returns the compiled-in,
+  deterministic Aveloria example world with fixed IDs and literal names
+  (decision 0009). Region: Aveloria. Villages: Marale and Brelin. Locations
+  (authored, not generated): Marale Homes, Marale Fields, Marale Market,
+  Aveloria Road, Brelin Homes, Brelin Fields, Brelin Market. Each village's
+  three locations are interconnected, and Marale Market and Brelin Market
+  link to Aveloria Road, so the villages are connected. Costs are walking
+  time in world-seconds. The result also reports which locations belong to
+  each village, since `World` does not yet record that grouping.
 - `SimulationClock` owns integer simulation time and a positive fixed step.
 - `world_time_from` (simulation target) derives `WorldTime` (day index, hour,
   minute, time of day) from clock time and the world-day duration with integer

@@ -131,6 +131,11 @@ measured run, and minimal save/load.
 
 ## Progress
 
+- 2026-11-21: Implemented #33 on `feat/33-aveloria-world` (stacked on #32):
+  compiled-in `build_aveloria_world` (Aveloria; Marale, Brelin; seven named
+  locations joined by Aveloria Road) with structure, cross-settlement path,
+  and repeatability tests. Settlement-to-location grouping is reported by the
+  builder because `World` does not record it.
 - 2026-11-21: Implemented #32 on `feat/32-pathfinding` (stacked on #31):
   `find_path` Dijkstra with integer costs, lexicographically-lowest-ID
   tie-break, and explicit same-location, unreachable, and unknown results.

@@ -104,7 +104,12 @@ prints each error to standard error, and exits with code 2; for example,
   undirected and owned by the world; self-connections, duplicates (either
   direction), unknown locations, and non-positive costs return a
   `ConnectResult` other than `connected` and change nothing. `neighbors(id)`
-  iterates by ascending destination ID. Pathfinding is not implemented yet.
+  iterates by ascending destination ID. `find_path`
+  (`core/world/pathfinding.hpp`) runs integer-cost Dijkstra and returns a
+  `PathResult` (`found`, `same_location`, `unreachable`, or
+  `unknown_location`) with the path and total world-second cost. Among
+  equal-cost routes it returns the one whose location IDs, read from start to
+  goal, are lexicographically smallest.
 - `SimulationClock` owns integer simulation time and a positive fixed step.
 - `world_time_from` (simulation target) derives `WorldTime` (day index, hour,
   minute, time of day) from clock time and the world-day duration with integer

@@ -26,6 +26,7 @@ add_library(fantasy_sim_simulation
     src/core/world/world.cpp
     src/core/world/pathfinding.cpp
     src/core/world/aveloria.cpp
+    src/core/world/world_overview.cpp
 )
 add_library(fantasy_sim::simulation ALIAS fantasy_sim_simulation)
 target_link_libraries(fantasy_sim_simulation PUBLIC fantasy_sim::infrastructure)
@@ -73,6 +74,7 @@ if(FANTASY_SIM_BUILD_TESTS)
         tests/core/world_tests.cpp
         tests/core/pathfinding_tests.cpp
         tests/core/aveloria_tests.cpp
+        tests/core/world_overview_tests.cpp
     )
     target_link_libraries(fantasy_sim_tests PRIVATE fantasy_sim::core Catch2::Catch2WithMain)
     if(MSVC)

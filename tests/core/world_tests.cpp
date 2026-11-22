@@ -168,3 +168,43 @@ TEST_CASE("neighbors iterate by ascending destination ID, not insertion order") 
     CHECK(order == std::vector<std::uint64_t>{2, 3, 4});
     CHECK(world.neighbors(L(99)).empty());
 }
+
+TEST_CASE("locations may belong to a settlement of the same region", "[world][membership]") {
+    World world;
+    REQUIRE(world.add_region(R(1)) == AddResult::added);
+    REQUIRE(world.add_settlement(R(1), S(1), "Marale") == AddResult::added);
+    REQUIRE(world.add_settlement(R(1), S(2)) == AddResult::added);
+    // Added out of ID order to show ordering is by ID, not insertion.
+    REQUIRE(world.add_location(R(1), L(9), "Market", S(1)) == AddResult::added);
+    REQUIRE(world.add_location(R(1), L(3), "Homes", S(1)) == AddResult::added);
+    REQUIRE(world.add_location(R(1), L(5), "Road") == AddResult::added);
+
+    CHECK(world.settlement_of(L(9)) == S(1));
+    CHECK(world.find_location(L(3))->settlement == S(1));
+    CHECK(world.settlement_of(L(5)) == std::nullopt);
+    CHECK(world.settlement_of(L(77)) == std::nullopt);
+
+    const std::vector<LocationId> in_order{world.locations_of(S(1)).begin(),
+                                           world.locations_of(S(1)).end()};
+    CHECK(in_order == std::vector<LocationId>{L(3), L(9)});
+    CHECK(world.locations_of(S(2)).empty());
+    CHECK(world.locations_of(S(42)).empty());
+}
+
+TEST_CASE("adding a location with a bad settlement is rejected", "[world][membership]") {
+    World world;
+    REQUIRE(world.add_region(R(1)) == AddResult::added);
+    REQUIRE(world.add_region(R(2)) == AddResult::added);
+    REQUIRE(world.add_settlement(R(1), S(1)) == AddResult::added);
+
+    CHECK(world.add_location(R(1), L(1), "A", S(9)) == AddResult::unknown_settlement);
+    CHECK(world.add_location(R(2), L(2), "B", S(1)) == AddResult::settlement_region_mismatch);
+    CHECK(world.add_location(R(1), L(3), "C", SettlementId{}) == AddResult::unknown_settlement);
+
+    CHECK(world.find_location(L(1)) == nullptr);
+    CHECK(world.find_location(L(2)) == nullptr);
+    CHECK(world.find_location(L(3)) == nullptr);
+    CHECK(world.locations_of(S(1)).empty());
+    // A rejected add leaves the ID free for a valid add.
+    CHECK(world.add_location(R(1), L(1), "A", S(1)) == AddResult::added);
+}

@@ -69,6 +69,7 @@ the suggested order is top to bottom.
 | #32 | Deterministic pathfinding | #31 |
 | #33 | Aveloria example world | #32 |
 | #34 | CLI world overview | #33 |
+| #87 | Record settlement membership of locations in the world model | #34 |
 
 ### Feature #4: Simulate individual characters
 
@@ -131,6 +132,26 @@ measured run, and minimal save/load.
 
 ## Progress
 
+- 2026-11-21: Implemented #87 on `feat/87-settlement-membership` (stacked on
+  #34): optional location-to-settlement membership in `World` (same region
+  only, rejections `unknown_settlement` / `settlement_region_mismatch`,
+  `locations_of` by ascending ID); the Aveloria builder's per-village ID
+  lists are removed and `describe_world` now takes a `World`. Output of
+  `--describe-world` is unchanged and deterministic.
+- 2026-11-21: Implemented #34 on `feat/34-cli-world-overview` (stacked on
+  #33): `--describe-world` prints the Aveloria region, settlements,
+  locations, and connections in ascending-ID order via `describe_world`
+  (uses the builder's per-village location lists; `World` unchanged). This is
+  the last task of feature #3; the feature is complete pending merge of the
+  stacked PRs #82-#85 and this one.
+- 2026-11-21: Implemented #33 on `feat/33-aveloria-world` (stacked on #32):
+  compiled-in `build_aveloria_world` (Aveloria; Marale, Brelin; seven named
+  locations joined by Aveloria Road) with structure, cross-settlement path,
+  and repeatability tests. Settlement-to-location grouping is reported by the
+  builder because `World` does not record it.
+- 2026-11-21: Implemented #32 on `feat/32-pathfinding` (stacked on #31):
+  `find_path` Dijkstra with integer costs, lexicographically-lowest-ID
+  tie-break, and explicit same-location, unreachable, and unknown results.
 - 2026-11-21: Implemented #31 on `feat/31-location-connections` (stacked on
   #30): undirected `World::connect` with positive world-second travel costs,
   rejection results, and ID-ordered `neighbors`. Pathfinding remains #32.

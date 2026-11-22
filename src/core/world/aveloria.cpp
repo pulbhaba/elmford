@@ -29,16 +29,13 @@ AveloriaWorld build_aveloria_world() {
     const LocationId brelin_fields = loc(6);
     const LocationId brelin_market = loc(7);
 
-    w.add_location(a.region, marale_homes, "Marale Homes");
-    w.add_location(a.region, marale_fields, "Marale Fields");
-    w.add_location(a.region, marale_market, "Marale Market");
+    w.add_location(a.region, marale_homes, "Marale Homes", a.marale);
+    w.add_location(a.region, marale_fields, "Marale Fields", a.marale);
+    w.add_location(a.region, marale_market, "Marale Market", a.marale);
     w.add_location(a.region, a.road, "Aveloria Road");
-    w.add_location(a.region, brelin_homes, "Brelin Homes");
-    w.add_location(a.region, brelin_fields, "Brelin Fields");
-    w.add_location(a.region, brelin_market, "Brelin Market");
-
-    a.marale_locations = {marale_homes, marale_fields, marale_market};
-    a.brelin_locations = {brelin_homes, brelin_fields, brelin_market};
+    w.add_location(a.region, brelin_homes, "Brelin Homes", a.brelin);
+    w.add_location(a.region, brelin_fields, "Brelin Fields", a.brelin);
+    w.add_location(a.region, brelin_market, "Brelin Market", a.brelin);
 
     // Travel costs are walking time in world-seconds (decision 0003).
     w.connect(marale_homes, marale_market, 300);

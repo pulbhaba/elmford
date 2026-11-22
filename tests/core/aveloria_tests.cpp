@@ -46,9 +46,11 @@ TEST_CASE("Aveloria has the named region and villages") {
 
 TEST_CASE("each village has multiple connected locations") {
     const AveloriaWorld a = build_aveloria_world();
-    for (const auto* group : {&a.marale_locations, &a.brelin_locations}) {
+    for (const SettlementId village : {a.marale, a.brelin}) {
+        const auto* group = &a.world.locations_of(village);
         REQUIRE(group->size() > 1);
         for (LocationId id : *group) {
+            CHECK(a.world.settlement_of(id) == village);
             const Location* location = a.world.find_location(id);
             REQUIRE(location != nullptr);
             CHECK(location->name.has_value());
@@ -56,7 +58,7 @@ TEST_CASE("each village has multiple connected locations") {
         }
         // Every location of the village reaches the first one without leaving it.
         for (LocationId id : *group) {
-            const PathResult r = find_path(a.world, group->front(), id);
+            const PathResult r = find_path(a.world, *group->begin(), id);
             REQUIRE((r.status == PathStatus::found || r.status == PathStatus::same_location));
             for (LocationId step : r.path) {
                 CHECK(a.world.find_location(step)->name.has_value());
@@ -65,17 +67,30 @@ TEST_CASE("each village has multiple connected locations") {
     }
 }
 
+TEST_CASE("settlement membership is recorded in the world; the road is unaffiliated") {
+    const AveloriaWorld a = build_aveloria_world();
+    CHECK(a.world.locations_of(a.marale).size() == 3);
+    CHECK(a.world.locations_of(a.brelin).size() == 3);
+    CHECK(a.world.settlement_of(a.road) == std::nullopt);
+    for (LocationId id : a.world.locations_of(a.marale)) {
+        CHECK(a.world.find_location(id)->name->rfind("Marale", 0) == 0);
+    }
+    for (LocationId id : a.world.locations_of(a.brelin)) {
+        CHECK(a.world.find_location(id)->name->rfind("Brelin", 0) == 0);
+    }
+}
+
 TEST_CASE("the villages are connected to each other by the road") {
     const AveloriaWorld a = build_aveloria_world();
     REQUIRE(a.world.find_location(a.road) != nullptr);
-    CHECK(a.world.are_connected(a.marale_locations.back(), a.road));
-    CHECK(a.world.are_connected(a.road, a.brelin_locations.back()));
+    CHECK(a.world.are_connected(*a.world.locations_of(a.marale).rbegin(), a.road));
+    CHECK(a.world.are_connected(a.road, *a.world.locations_of(a.brelin).rbegin()));
 }
 
 TEST_CASE("a path exists between a location in each settlement") {
     const AveloriaWorld a = build_aveloria_world();
-    const LocationId from = a.marale_locations.front();
-    const LocationId to = a.brelin_locations.front();
+    const LocationId from = *a.world.locations_of(a.marale).begin();
+    const LocationId to = *a.world.locations_of(a.brelin).begin();
 
     const PathResult r = find_path(a.world, from, to);
     REQUIRE(r.status == PathStatus::found);
@@ -96,11 +111,11 @@ TEST_CASE("the builder returns the same world every call") {
     const AveloriaWorld first = build_aveloria_world();
     const AveloriaWorld second = build_aveloria_world();
     CHECK(same_world(first, second));
-    CHECK(first.marale_locations == second.marale_locations);
-    CHECK(first.brelin_locations == second.brelin_locations);
+    CHECK(first.world.locations_of(first.marale) == second.world.locations_of(second.marale));
+    CHECK(first.world.locations_of(first.brelin) == second.world.locations_of(second.brelin));
     CHECK(first.road == second.road);
-    CHECK(find_path(first.world, first.marale_locations.front(), first.brelin_locations.front())
+    CHECK(find_path(first.world, *first.world.locations_of(first.marale).begin(), *first.world.locations_of(first.brelin).begin())
               .path ==
-          find_path(second.world, second.marale_locations.front(), second.brelin_locations.front())
+          find_path(second.world, *second.world.locations_of(second.marale).begin(), *second.world.locations_of(second.brelin).begin())
               .path);
 }

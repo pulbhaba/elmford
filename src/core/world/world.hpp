@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <map>
 #include <optional>
+#include <set>
 #include <string>
 
 namespace fantasy::core {
@@ -17,6 +18,8 @@ enum class AddResult {
     duplicate_id,   // an entity of that type already has this ID
     unknown_region, // the parent region does not exist
     empty_name,     // a name was supplied but is empty
+    unknown_settlement,         // the named settlement does not exist
+    settlement_region_mismatch, // the settlement belongs to a different region
 };
 
 // Outcome of connecting two locations. Anything other than `connected` leaves
@@ -45,6 +48,9 @@ struct Settlement {
 struct Location {
     LocationId id;
     PlaceName name;
+    // The settlement this location belongs to, in the same region; nullopt
+    // for unaffiliated places such as roads or wilderness.
+    std::optional<SettlementId> settlement;
 };
 
 // A region owns its settlements and locations. Iteration is by ascending ID.
@@ -84,7 +90,11 @@ class World {
 public:
     AddResult add_region(RegionId id, PlaceName name = std::nullopt);
     AddResult add_settlement(RegionId region, SettlementId id, PlaceName name = std::nullopt);
-    AddResult add_location(RegionId region, LocationId id, PlaceName name = std::nullopt);
+    // `settlement`, when set, must be an existing settlement of `region`;
+    // otherwise the result is unknown_settlement or settlement_region_mismatch.
+    // Membership is fixed when the location is added.
+    AddResult add_location(RegionId region, LocationId id, PlaceName name = std::nullopt,
+                           std::optional<SettlementId> settlement = std::nullopt);
 
     [[nodiscard]] const Region* find_region(RegionId id) const noexcept;
     [[nodiscard]] const Settlement* find_settlement(SettlementId id) const noexcept;
@@ -110,12 +120,22 @@ public:
     [[nodiscard]] RegionId region_of(SettlementId id) const noexcept;
     [[nodiscard]] RegionId region_of(LocationId id) const noexcept;
 
+    // Settlement a location belongs to; nullopt when it is unaffiliated or
+    // the location is unknown.
+    [[nodiscard]] std::optional<SettlementId> settlement_of(LocationId id) const noexcept;
+
+    // Locations belonging to a settlement, ordered by ascending location ID
+    // (std::set ordering of the typed ID), never by insertion order. Empty
+    // for an unknown settlement or one with no locations.
+    [[nodiscard]] const std::set<LocationId>& locations_of(SettlementId id) const noexcept;
+
     [[nodiscard]] const std::map<RegionId, Region>& regions() const noexcept { return regions_; }
 
 private:
     std::map<RegionId, Region> regions_;
     std::map<SettlementId, RegionId> settlement_regions_;
     std::map<LocationId, RegionId> location_regions_;
+    std::map<SettlementId, std::set<LocationId>> settlement_locations_;
     std::map<LocationId, std::map<LocationId, TravelCost>> connections_;
 };
 

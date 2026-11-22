@@ -1,5 +1,7 @@
 #include "core/config/simulation_config.hpp"
 #include "core/simulation/simulation_runner.hpp"
+#include "core/world/aveloria.hpp"
+#include "core/world/world_overview.hpp"
 
 #include <charconv>
 #include <chrono>
@@ -15,6 +17,7 @@ namespace {
 
 struct Options {
     fantasy::core::SimulationConfig simulation{fantasy::core::default_simulation_config};
+    bool describe_world{false};
 };
 
 std::uint64_t parse_unsigned(std::string_view value, std::string_view argument_name) {
@@ -31,9 +34,15 @@ Options parse_options(int argc, char* argv[]) {
     for (int index = 1; index < argc; ++index) {
         const std::string_view argument{argv[index]};
         if (argument == "--help" || argument == "-h") {
-            std::cout << "Usage: fantasy_sim [--seed INTEGER] [--ticks INTEGER] [--step-ns INTEGER]\n"
+            std::cout << "Usage: fantasy_sim [--seed INTEGER] [--ticks INTEGER] [--step-ns INTEGER] [--describe-world]\n"
+                         "  --describe-world   Print the Aveloria example world (regions, settlements, locations,\n"
+                         "                     connections) and exit; other arguments are ignored\n"
                          "  --step-ns INTEGER  Fixed step duration in nanoseconds (default: 1000000000 = 1 world-second)\n";
             std::exit(0);
+        }
+        if (argument == "--describe-world") {
+            options.describe_world = true;
+            continue;
         }
         if (argument != "--seed" && argument != "--ticks" && argument != "--step-ns") {
             throw std::invalid_argument("unknown argument: " + std::string(argument));
@@ -63,6 +72,10 @@ Options parse_options(int argc, char* argv[]) {
 int main(int argc, char* argv[]) {
     try {
         const auto options = parse_options(argc, argv);
+        if (options.describe_world) {
+            std::cout << fantasy::core::describe_world(fantasy::core::build_aveloria_world().world);
+            return 0;
+        }
         if (const auto errors = fantasy::core::validate(options.simulation); !errors.empty()) {
             for (const auto& error : errors) {
                 std::cerr << "[ERROR] invalid configuration: " << error << '\n';

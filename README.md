@@ -53,6 +53,15 @@ and a deterministic checksum from one random draw per update. The duration can
 vary between runs; simulation results and checksum remain stable for identical
 inputs.
 
+Use `--describe-world` to print the Aveloria example world (its region,
+settlements with their member locations, unaffiliated locations, and
+connections, grouped from the world's recorded membership) in a stable order and exit; the
+output is identical on every run, and the simulation arguments are ignored:
+
+```sh
+./build/fantasy_sim --describe-world
+```
+
 Use `fantasy_sim --help` to show the supported arguments. Invalid arguments
 produce an error on standard error and a non-zero exit code.
 
@@ -92,6 +101,40 @@ prints each error to standard error, and exits with code 2; for example,
 - `StableIdAllocator<Id>` allocates IDs from zero in call order. Each ID type
   has its own allocator; allocation throws `std::overflow_error` rather than
   returning the invalid sentinel when the value range is exhausted.
+- `World` (simulation target, `core/world/world.hpp`) owns regions; each
+  region owns its settlements and locations. Lookup is by typed ID
+  (`find_*` returns `nullptr` when unknown) and iteration is by ascending ID,
+  not insertion order. IDs are unique per type across the world. `add_*`
+  returns an `AddResult` and changes nothing unless it is `added`; rejections
+  are invalid ID, duplicate ID, unknown parent region, and empty name. A
+  location may optionally belong to one settlement of its own region (roads and
+  wilderness stay unaffiliated); `add_location` rejects an unknown settlement
+  (`unknown_settlement`) or one in another region
+  (`settlement_region_mismatch`). `settlement_of(location)` returns the optional
+  membership and `locations_of(settlement)` returns its locations by ascending
+  location ID, never insertion order. Names
+  are optional (`std::optional<std::string>`); an unnamed place is identified
+  by ID alone. `World::connect` links two existing locations with a positive
+  integer travel cost in **world-seconds** (`TravelCost`). Connections are
+  undirected and owned by the world; self-connections, duplicates (either
+  direction), unknown locations, and non-positive costs return a
+  `ConnectResult` other than `connected` and change nothing. `neighbors(id)`
+  iterates by ascending destination ID. `find_path`
+  (`core/world/pathfinding.hpp`) runs integer-cost Dijkstra and returns a
+  `PathResult` (`found`, `same_location`, `unreachable`, or
+  `unknown_location`) with the path and total world-second cost. Among
+  equal-cost routes it returns the one whose location IDs, read from start to
+  goal, are lexicographically smallest.
+- `build_aveloria_world` (`core/world/aveloria.hpp`) returns the compiled-in,
+  deterministic Aveloria example world with fixed IDs and literal names
+  (decision 0009). Region: Aveloria. Villages: Marale and Brelin. Locations
+  (authored, not generated): Marale Homes, Marale Fields, Marale Market,
+  Aveloria Road, Brelin Homes, Brelin Fields, Brelin Market. Each village's
+  three locations are interconnected, and Marale Market and Brelin Market
+  link to Aveloria Road, so the villages are connected. Costs are walking
+  time in world-seconds. Marale's and Brelin's locations are recorded as
+  members of their villages in the `World`; Aveloria Road belongs to no
+  settlement.
 - `SimulationClock` owns integer simulation time and a positive fixed step.
 - `world_time_from` (simulation target) derives `WorldTime` (day index, hour,
   minute, time of day) from clock time and the world-day duration with integer
